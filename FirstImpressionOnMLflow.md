@@ -53,10 +53,133 @@ Every `Run` can be viewed through UI browser that connects to the tracking serve
 Users can search and filter models with `metrics` and `params`, and compare and retrieve model details.
 
 #### Projects
-Projects component defines the specification on how to run the model training code. It includes the platform configuration, the source code, the data and others that 
-#### Models
+Projects component defines the specification on how to run the model training code. It includes the platform configuration, the dependencies, the source code, the data and others that allows the model training to be executed through *MLflow*. Following is an example provided by the *MLflow*:
+```
+name: tutorial
 
-![packages](images/packages.jpg)
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      alpha: float
+      l1_ratio: {type: float, default: 0.1}
+    command: "python train.py {alpha} {l1_ratio}"
+```
+
+The `mlflow run` command looks for `MLproject` file for the spec and download the dependencies if needed, then runs the model training with the source code and data specified in the `MLproject`. 
+```
+mlflow run mlflow/example/tutorial -P alpha=0.4
+```
+
+The `MLproject` specifies the command to run the source code, therefore, the source code can be in any languages, including Python. Projects can be run on many machine learning platforms, including tensorflow, pyspark, scikit-learn and others. If the dependent Python packages are available to download by Anaconda, they can be added to `conda.yaml` file and *MLflow* will set up the packages automatically.
+
+#### Models
+Models component defines the general model format in the `MLmodel` file as follow:
+```
+artifact_path: model
+flavors:
+  python_function:
+    data: model.pkl
+    loader_module: mlflow.sklearn
+  sklearn:
+    pickled_model: model.pkl
+    sklearn_version: 0.19.1
+run_id: 0927ac17b2954dc0b4d944e6834817fd
+utc_time_created: '2018-08-06 18:38:16.294557'
+```
+It specifies different `flavors` for different tools to deploy and load the model. This allows the model to be saved in its original binary persistence output from the platform training the model. For example, in scikit-learn, the model is serialized with Python `pickle` package. The model can then be deployed to the environment which understands this format. With the `sklearn` flavor, if the environment has the scikit-learn installed, it can directly load the model and serve. Otherwise, with the `python_function` flavor, *MLflow* provides the `mlflow.sklearn` Python module as the helper to load the model.
+
+So far *Mlflow* supports models load, save and deployment with scikit-learn, tensorflow, sagemaker, h2o, azure and spark platforms.
+
+With *MLflow*'s modular design, the current `Tracking`, `Projects` and `Models` components touch most parts of the machine learning lifecycle. Users can also choose to use one component but not the others if they like. With its REST APIs, these components can also be easily integrated into other machine learning workflows.
+
 ## Experience MLflow
+Installing *MLflow* is quick and easy if [Anaconda](https://anaconda.org/) has been installed and a virtual env has been created. `pip install mlflow` will install the latest *MLflow* release.
+
+To train the model with `tensorflow`, run `pip install tensorflow` to install the latest version of `tensorflow`.
+
+A simple example to train a tensorflow model with following code
+[tf-example.py](https://github.com/adrian555/DocsDump/files/tf-example/tf-example.py)
+
+```python
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+
+import mlflow
+from mlflow import tracking
+
+# load dataset
+dataset = np.loadtxt("/Users/wzhuang/housing.csv", delimiter=",")
+
+# save the data as artifact
+mlflow.log_artifact("/Users/wzhuang/housing.csv")
+
+# split the features and label
+X = dataset[:, 0:15]
+Y = dataset[:, 15]
+
+# define the model
+model = keras.Sequential([
+    keras.layers.Dense(64, activation=tf.nn.relu, 
+                       input_shape=(X.shape[1],)),
+    keras.layers.Dense(64, activation=tf.nn.relu),
+    keras.layers.Dense(1)
+  ])
+  
+# log some parameters
+mlflow.log_param("First_layer_dense", 64)
+mlflow.log_param("Second_layer_dense", 64)
+
+optimizer = tf.train.RMSPropOptimizer(0.001)
+
+model.compile(loss='mse',
+              optimizer=optimizer,
+              metrics=['mae'])
+
+# train
+model.fit(X, Y, epochs=500, validation_split=0.2, verbose=0)
+
+# log the model artifact
+model_json = model.to_json()
+with open("model.json", "w") as json_file:
+    json_file.write(model_json)
+mlflow.log_artifact("model.json")
+```
+
+The first call to the `tracking` API will start the tracking server and log all the data sent through the current and subsequent APIs. These logged data can then be viewed in the *MLflow* UI. From the example above, it is quite easy to just call the logging APIs in any place users want to track.
+
+Packaging this project is also very simple by just creating a [MLproject](https://github.com/adrian555/DocsDump/files/tf-example/MLproject) file as such:
+```
+name: tf-example
+conda_env: conda.yaml
+entry_points:
+  main:
+    command: "python tf-example.py"
+```
+with [conda.yaml](https://github.com/adrian555/DocsDump/files/tf-example/conda.yaml)
+```
+name: tf-example
+channels:
+  - defaults
+dependencies:
+  - python=3.6
+  - numpy=1.14.3
+  - pip:
+    - mlflow
+    - tensorflow
+```
+
+Then `mlflow run tf-example` will run the project on any environment. It first creates a `conda` environment with the required Python packages installed and then run the [tf-example.py](https://github.com/adrian555/DocsDump/files/tf-example/tf-example.py) inside that virtual env. As expected, the run result is also logged to the *MLflow* tracking server.
+
+*MLflow* also comes with a server implementation where the `sklearn` and other types of models can be deployed and served. The [*MLflow* github README.md](https://github.com/mlflow/mlflow) illustrates the usage. However, to deploy and serve the model built by the above example requires new code that understands Keras models. This is beyond this blog's scope.
+
+To summarize, the experience with *MLflow* is smooth. There were several bugs here and there but overall was satisfied with what the project claims to be. Of course since *MLflow* is still in its alpha phase, bugs and lacking of some features are expected. The rest sections will do some quick comparison and propose features to complete *MLflow* in all aspects of the machine learning workflow.
+
 ### Comparison
 ## What can make MLflow do better
+
+
+
+![packages](images/packages.jpg)
