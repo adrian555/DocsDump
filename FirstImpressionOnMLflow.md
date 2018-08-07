@@ -4,7 +4,7 @@
 
 Blogs and meetups from databricks describe *MLflow* and its roadmap, including [Introducing MLflow: an Open Source Machine Learning Platform](https://databricks.com/blog/2018/06/05/introducing-mlflow-an-open-source-machine-learning-platform.html) and [MLflow: Infrastructure for a Complete Machine Learning Life Cycle](https://www.slideshare.net/databricks/mlflow-infrastructure-for-a-complete-machine-learning-life-cycle). Users and developers can find useful information to try out *MLflow* and further contribute to the project.
 
-This blog, however, will show the values of *MLflow* and describe the internals of the *MLflow* based on the firsthand experience and the study of the source code. It will also look for places *MLflow* can be enhanced by some comparison with other similar projects.
+This blog, however, will dig further and describe some internals of the *MLflow* based on the firsthand experience and the study of the source code. It will also provide suggestions on places *MLflow* may be improved.
 
 ## What is MLflow
 ***MLflow*** is targeted as an open source platform for the complete machine learning lifecycle. A complete machine learning lifecycle at least includes raw data ingestion, data analysis and preparing, model training, model evaluation, model deployment and finally model maintenance. *MLflow* is built as a Python package and provides open REST APIs and commands to
@@ -23,7 +23,7 @@ Currently *MLflow* has three components as follow (source: [Introducing MLflow: 
 Further description of each component can be found in the blog mentioned above and the link to the [*MLflow* Documentation](https://mlflow.org/docs/latest/index.html). Rest of the section will give a high level overview of the internals and implementation of each component. 
 
 #### Tracking
-Tracking implements REST APIs and UI for parameters, metrics, artifacts and source logging and viewing. The backend is implemented with [Flask](http://flask.pocoo.org/) and run on [gunicorn](http://gunicorn.org/) HTTP server while the UI is implemented with [React](https://reactjs.org/).
+`Tracking` component implements REST APIs and UI for parameters, metrics, artifacts and source logging and viewing. The backend is implemented with [Flask](http://flask.pocoo.org/) and run on [gunicorn](http://gunicorn.org/) HTTP server while the UI is implemented with [React](https://reactjs.org/).
 
 The Python module for tracking is `mlflow.tracking`.
 
@@ -53,7 +53,7 @@ Every `Run` can be viewed through UI browser that connects to the tracking serve
 Users can search and filter models with `metrics` and `params`, and compare and retrieve model details.
 
 #### Projects
-Projects component defines the specification on how to run the model training code. It includes the platform configuration, the dependencies, the source code, the data and others that allows the model training to be executed through *MLflow*. Following is an example provided by the *MLflow*:
+`Projects` component defines the specification on how to run the model training code. It includes the platform configuration, the dependencies, the source code, the data and others that allows the model training to be executed through *MLflow*. Following is an example provided by the *MLflow*:
 ```
 name: tutorial
 
@@ -75,7 +75,7 @@ mlflow run mlflow/example/tutorial -P alpha=0.4
 The `MLproject` specifies the command to run the source code, therefore, the source code can be in any languages, including Python. Projects can be run on many machine learning platforms, including tensorflow, pyspark, scikit-learn and others. If the dependent Python packages are available to download by Anaconda, they can be added to `conda.yaml` file and *MLflow* will set up the packages automatically.
 
 #### Models
-Models component defines the general model format in the `MLmodel` file as follow:
+`Models` component defines the general model format in the `MLmodel` file as follow:
 ```
 artifact_path: model
 flavors:
@@ -94,7 +94,7 @@ So far *Mlflow* supports models load, save and deployment with scikit-learn, ten
 
 With *MLflow*'s modular design, the current `Tracking`, `Projects` and `Models` components touch most parts of the machine learning lifecycle. Users can also choose to use one component but not the others if they like. With its REST APIs, these components can also be easily integrated into other machine learning workflows.
 
-## Experience MLflow
+## Experiencing MLflow
 Installing *MLflow* is quick and easy if [Anaconda](https://anaconda.org/) has been installed and a virtual env has been created. `pip install mlflow` will install the latest *MLflow* release.
 
 To train the model with `tensorflow`, run `pip install tensorflow` to install the latest version of `tensorflow`.
@@ -121,16 +121,18 @@ X = dataset[:, 0:15]
 Y = dataset[:, 15]
 
 # define the model
+first_layer_dense = 64
+second_layer_dense = 64
 model = keras.Sequential([
-    keras.layers.Dense(64, activation=tf.nn.relu, 
+    keras.layers.Dense(first_layer_dense, activation=tf.nn.relu, 
                        input_shape=(X.shape[1],)),
-    keras.layers.Dense(64, activation=tf.nn.relu),
+    keras.layers.Dense(second_layer_dense, activation=tf.nn.relu),
     keras.layers.Dense(1)
   ])
   
 # log some parameters
-mlflow.log_param("First_layer_dense", 64)
-mlflow.log_param("Second_layer_dense", 64)
+mlflow.log_param("First_layer_dense", first_layer_dense)
+mlflow.log_param("Second_layer_dense", second_layer_dense)
 
 optimizer = tf.train.RMSPropOptimizer(0.001)
 
@@ -175,11 +177,45 @@ Then `mlflow run tf-example` will run the project on any environment. It first c
 
 *MLflow* also comes with a server implementation where the `sklearn` and other types of models can be deployed and served. The [*MLflow* github README.md](https://github.com/mlflow/mlflow) illustrates the usage. However, to deploy and serve the model built by the above example requires new code that understands Keras models. This is beyond this blog's scope.
 
-To summarize, the experience with *MLflow* is smooth. There were several bugs here and there but overall was satisfied with what the project claims to be. Of course since *MLflow* is still in its alpha phase, bugs and lacking of some features are expected. The rest sections will do some quick comparison and propose features to complete *MLflow* in all aspects of the machine learning workflow.
+To summarize, the experience with *MLflow* is smooth. There were several bugs here and there but overall was satisfied with what the project claims to be. Of course since *MLflow* is still in its alpha phase, bugs and lacking of some features are expected.
 
-### Comparison
-## What can make MLflow do better
+## Things *MLflow* can be enhanced
+*MLflow* so far provides an open source solution to track the data science processing, package and deploy machine learning model. As it claims, it targets the management of the machine learning lifecycle. The current alpha version releases the `Tracking`, `Projects` and `Models` components that tackle individual stages of the machine learning workflow. The tool is compact in Python language while providing APIs and UI to be integrated with any machine learning platform easily.
 
+However, there are still many places that *MLflow* may be improved. There are also new features required for the tool to fully manage and monitor all aspects of the lifecycle of machine learning.
 
+At the Databricks' [meetup](https://databricks.com/blog/2018/07/25/bay-area-apache-spark-meetup-summary-databricks-hq.html) on 07/19/2018, several items have been mentioned in the longer-term road map of *MLflow* according to the [presentation](https://www.slideshare.net/databricks/mlflow-infrastructure-for-a-complete-machine-learning-life-cycle). There are four categories, including improving current components, new MLflow Data component, hyperparameter tuning and language and library integrations. Some items are really important so they need extra explain.
 
-![packages](images/packages.jpg)
+Implementing a database backend for `Tracking` component is included in the first category. As mentioned above, the *MLflow* tracking server logs every run info in local file system. This looks like a quick and easy implementation. A better solution will be using a database as the tracking store. When the number of machine learning runs grows, database has its obvious advantage on data queries and retrieval. 
+
+Model metadata support is also included in the first category. This is extremely important. Current `Tracking` component does not describe the model and all runs are viewed as a flatten list ordered by date. The tool allows the search based on the parameters and metrics, but it is far away from enough. Users certainly would like to quickly retrieve the models by model name, algorithm, platform etc. This requires metadata input when a model training is tracked. Tracking server logs the file name of the source code. This does not provide any value to identify a model. Instead, it should allow to input a description of the model. Furthermore, the access control is also essential and can be part of the metadata. And model management should also have versioning support.
+
+In the second category, *MLflow* will introduce a new `Data` component. It will build on top of [Spark](https://spark.apache.org/)'s Data Source API and allows projects to load data from many formats. This can be viewed as an effort to tighten the *MLflow* relationship with *Spark*. What should be done further is of course maintaining the metadata for the data.
+
+In the fourth category, the integration with R and Java is also important. Although Python today becomes the most adopted language in machine learning, there are many data scientists still using R and other languages. *MLflow* needs to provide R and Java APIs so those machine learning workflows can be managed as well.
+
+There are other important features not included in the current road map. From this blog's viewpoint, following list of items are also desired and may help complete *MLflow* as a full machine learning data and model management tool.
+
+* Register APIs  
+  *MLflow* provides the APIs to log run info. These APIs have to be called inside the model training source code and they are called at runtime. This approach becomes inconvenient either users just want to track the previously runs without these APIs, or runs without access to the source code. To solve such problem, a set of REST APIs that can be called post run to register the run info will be very helpful. The run info, such as parameters, metrics and artifacts, can be part of the JSON input.
+
+* UI view enhancement  
+  In the `Experiments` UI view, `Parameters` and `Metrics` columns display all parameters and metrics for all runs. The row will become unfriendly long and difficult to view when more types of parameters and metrics are tracked. Instead, for each run, the view should just display a hyperlink to the detailed run info where the parameters and metrics will show only for this run. Furthermore, this approach can help solve the problem on logging 
+
+* Artifact location  
+  *MLflow* can take artifacts from either local or github. It would be a great improvement to support the load and save data, source code and model from other sources, such as S3 Object Storage, HDFS, Nexus etc.
+  
+* Import and export  
+  Once the tracking store is implemented with database as backend, the next thing will be to support import and export all experiments stored in different databases.
+  
+* Run projects remotely  
+  `Projects` component specifies the command to run the project and the command is displayed in the tracking UI. But since the project can only run on the specific machine learning platform, which can be different from the tracking server, users still have to connect to the platform remotely and issue the command line. The `MLproject` specification should include the platform information, such as hostname and credentials. With these info, the tracking UI should add an action to kick off the run through the UI.
+  
+* Tuning  
+  Adding the parameter tuning functionality through the tracking UI is an important feature. Users will be allowed to change the parameters and kick off the run if the project is tracked by the `Projects` component.
+
+* Common model format  
+  `Models` component defines `flavors` for a model. However, every model still stores in its original format only understood by that training tool. There is still gap between the model development and production. [Portable Format for Analytics](http://dmg.org/pfa/docs/motivation/) is a specification that can help bridge the gap. `MLmode` can be improved to understand PFA and/or convert models into PFA for easy deploying models to PFA-enabled platforms.
+  
+* Pipeline integration  
+  A complete machine learning lifecycle also includes data preparation and other pipelines. *MLflow* so far only tracks the training step. The `MLproject` may be enhanced to include the specification of other pipelines. Some pipelines may be shared by projects as well.
