@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>FirstImpressionOnMLflow</title>
+
+
+<style type="text/css">
+body {
+  font-family: Helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+  padding: 30px; }
+
+body > *:first-child {
+  margin-top: 0 !important; }
+body > *:last-child {
+  margin-bottom: 0 !important; }
+
+a {
+  color: #4183C4; }
+a.absent {
+  color: #cc0000; }
+a.anchor {
+  display: block;
+  padding-left: 30px;
+  margin-left: -30px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  cursor: text;
+  position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA09pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoMTMuMCAyMDEyMDMwNS5tLjQxNSAyMDEyLzAzLzA1OjIxOjAwOjAwKSAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OUM2NjlDQjI4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OUM2NjlDQjM4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5QzY2OUNCMDg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5QzY2OUNCMTg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsQhXeAAAABfSURBVHjaYvz//z8DJYCRUgMYQAbAMBQIAvEqkBQWXI6sHqwHiwG70TTBxGaiWwjCTGgOUgJiF1J8wMRAIUA34B4Q76HUBelAfJYSA0CuMIEaRP8wGIkGMA54bgQIMACAmkXJi0hKJQAAAABJRU5ErkJggg==) no-repeat 10px center;
+  text-decoration: none; }
+
+h1 tt, h1 code {
+  font-size: inherit; }
+
+h2 tt, h2 code {
+  font-size: inherit; }
+
+h3 tt, h3 code {
+  font-size: inherit; }
+
+h4 tt, h4 code {
+  font-size: inherit; }
+
+h5 tt, h5 code {
+  font-size: inherit; }
+
+h6 tt, h6 code {
+  font-size: inherit; }
+
+h1 {
+  font-size: 28px;
+  color: black; }
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #cccccc;
+  color: black; }
+
+h3 {
+  font-size: 18px; }
+
+h4 {
+  font-size: 16px; }
+
+h5 {
+  font-size: 14px; }
+
+h6 {
+  color: #777777;
+  font-size: 14px; }
+
+p, blockquote, ul, ol, dl, li, table, pre {
+  margin: 15px 0; }
+
+hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  color: #cccccc;
+  height: 4px;
+  padding: 0;
+}
+
+body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+body > h1:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+  body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0; }
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0; }
+
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+  margin-top: 0; }
+
+li p.first {
+  display: inline-block; }
+li {
+  margin: 0; }
+ul, ol {
+  padding-left: 30px; }
+
+ul :first-child, ol :first-child {
+  margin-top: 0; }
+
+dl {
+  padding: 0; }
+  dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px; }
+    dl dt:first-child {
+      padding: 0; }
+    dl dt > :first-child {
+      margin-top: 0; }
+    dl dt > :last-child {
+      margin-bottom: 0; }
+  dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px; }
+    dl dd > :first-child {
+      margin-top: 0; }
+    dl dd > :last-child {
+      margin-bottom: 0; }
+
+blockquote {
+  border-left: 4px solid #dddddd;
+  padding: 0 15px;
+  color: #777777; }
+  blockquote > :first-child {
+    margin-top: 0; }
+  blockquote > :last-child {
+    margin-bottom: 0; }
+
+table {
+  padding: 0;border-collapse: collapse; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+
+img {
+  max-width: 100%; }
+
+span.frame {
+  display: block;
+  overflow: hidden; }
+  span.frame > span {
+    border: 1px solid #dddddd;
+    display: block;
+    float: left;
+    overflow: hidden;
+    margin: 13px 0 0;
+    padding: 7px;
+    width: auto; }
+  span.frame span img {
+    display: block;
+    float: left; }
+  span.frame span span {
+    clear: both;
+    color: #333333;
+    display: block;
+    padding: 5px 0 0; }
+span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-center > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: center; }
+  span.align-center span img {
+    margin: 0 auto;
+    text-align: center; }
+span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px 0 0;
+    text-align: right; }
+  span.align-right span img {
+    margin: 0;
+    text-align: right; }
+span.float-left {
+  display: block;
+  margin-right: 13px;
+  overflow: hidden;
+  float: left; }
+  span.float-left span {
+    margin: 13px 0 0; }
+span.float-right {
+  display: block;
+  margin-left: 13px;
+  overflow: hidden;
+  float: right; }
+  span.float-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: right; }
+
+code, tt {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px; }
+
+pre code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent; }
+
+.highlight pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+  pre code, pre tt {
+    background-color: transparent;
+    border: none; }
+
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+
+kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  font-size: 11px;
+  line-height: 10px;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fcfcfc;
+  border: solid 1px #ccc;
+  border-bottom-color: #bbb;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #bbb
+}
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+	pre {
+		word-wrap: break-word;
+	}
+}
+</style>
+
+
+</head>
+
+<body>
+
+<h1 id="toc_0">First Impression on MLflow</h1>
+
+<p><a href="https://mlflow.org/"><strong><em>MLflow</em></strong></a> is one of the latest open source projects added to the <a href="https://spark.apache.org/"><strong>Apache Spark</strong></a> ecosystem by <a href="https://databricks.com/">databricks</a>. It first debut in the <a href="https://databricks.com/session/unifying-data-and-ai-for-better-data-products">Spark + AI Summit 2018</a>. The source code is hosted in the <a href="https://github.com/databricks/mlflow">mlflow-github</a> and is still in the alpha release stage. The current version is 0.4.1 released on 08/03/2018.</p>
+
+<p>Blogs and meetups from databricks describe <em>MLflow</em> and its roadmap, including <a href="https://databricks.com/blog/2018/06/05/introducing-mlflow-an-open-source-machine-learning-platform.html">Introducing MLflow: an Open Source Machine Learning Platform</a> and <a href="https://www.slideshare.net/databricks/mlflow-infrastructure-for-a-complete-machine-learning-life-cycle">MLflow: Infrastructure for a Complete Machine Learning Life Cycle</a>. Users and developers can find useful information to try out <em>MLflow</em> and further contribute to the project.</p>
+
+<p>This blog, however, will dig further and describe some internals of the <em>MLflow</em> based on the firsthand experience and the study of the source code. It will also provide suggestions on places <em>MLflow</em> may be improved.</p>
+
+<h2 id="toc_1">What is MLflow</h2>
+
+<p><strong><em>MLflow</em></strong> is targeted as an open source platform for the complete machine learning lifecycle. A complete machine learning lifecycle at least includes raw data ingestion, data analysis and preparing, model training, model evaluation, model deployment and finally model maintenance. <em>MLflow</em> is built as a Python package and provides open REST APIs and commands to</p>
+
+<ul>
+<li>log important parameters, metrics and other data that are mattered to the machine learning model</li>
+<li>track the environment a model is run on </li>
+<li>run any machine learning codes on that environment </li>
+<li>deploy and export models to various platforms with multiple packaging formats </li>
+</ul>
+
+<p><em>MLflow</em> is implemented as several modules, where each module supports a specific function.</p>
+
+<h3 id="toc_2">MLflow components</h3>
+
+<p>Currently <em>MLflow</em> has three components as follow (source: <a href="https://databricks.com/blog/2018/06/05/introducing-mlflow-an-open-source-machine-learning-platform.html">Introducing MLflow: an Open Source Machine Learning Platform</a>)
+<img src="https://databricks.com/wp-content/uploads/2018/06/mlflow.png" alt="*MLflow* components"></p>
+
+<p>Further description of each component can be found in the blog mentioned above and the link to the <a href="https://mlflow.org/docs/latest/index.html"><em>MLflow</em> Documentation</a>. Rest of the section will give a high level overview of the internals and implementation of each component. </p>
+
+<h4 id="toc_3">Tracking</h4>
+
+<p><code>Tracking</code> component implements REST APIs and UI for parameters, metrics, artifacts and source logging and viewing. The backend is implemented with <a href="http://flask.pocoo.org/">Flask</a> and run on <a href="http://gunicorn.org/">gunicorn</a> HTTP server while the UI is implemented with <a href="https://reactjs.org/">React</a>.</p>
+
+<p>The Python module for tracking is <code>mlflow.tracking</code>.</p>
+
+<p>Every time users train a model on the machine learning platform <em>MLflow</em> creates a <code>Run</code>  and save the <code>RunInfo</code> meta info onto disk. Python APIs are provided to log parameters and metrics for a <code>Run</code>. The output of the run such as the model are saved in the <code>artifacts</code> for a <code>Run</code>. Each individual <code>Run</code> is grouped into an <code>Experiment</code>. Following class diagram shows classes defined in <em>MLflow</em> to support tracking function.
+<img src="images/mlflowObjects.jpg" alt="*MLflow* objects"></p>
+
+<p>The model training source code needs to call <em>MLflow</em> APIs to log the data to be tracked. For example, calling <code>log_metric</code> to log the metrics and <code>log_param</code> to log the parameters.</p>
+
+<p><em>MLflow</em> tracking server currently uses file system to persist all <code>Experiment</code> data. The directory structure looks like below:</p>
+
+<div><pre><code class="language-none">mlruns
+└── 0
+    ├── 7003d550294e4755a65569dd846a7ca6
+    │   ├── artifacts
+    │   │   └── test.txt
+    │   ├── meta.yaml
+    │   ├── metrics
+    │   │   └── foo
+    │   └── params
+    │       └── param1
+    └── meta.yaml</code></pre></div>
+
+<p>Every <code>Run</code> can be viewed through UI browser that connects to the tracking server. 
+<img src="images/mlflow-ui.jpg" alt="*MLflow* UI"></p>
+
+<p>Users can search and filter models with <code>metrics</code> and <code>params</code>, and compare and retrieve model details.</p>
+
+<h4 id="toc_4">Projects</h4>
+
+<p><code>Projects</code> component defines the specification on how to run the model training code. It includes the platform configuration, the dependencies, the source code, the data and others that allows the model training to be executed through <em>MLflow</em>. Following is an example provided by the <em>MLflow</em>:</p>
+
+<div><pre><code class="language-none">name: tutorial
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      alpha: float
+      l1_ratio: {type: float, default: 0.1}
+    command: &quot;python train.py {alpha} {l1_ratio}&quot;</code></pre></div>
+
+<p>The <code>mlflow run</code> command looks for <code>MLproject</code> file for the spec and download the dependencies if needed, then runs the model training with the source code and data specified in the <code>MLproject</code>. </p>
+
+<div><pre><code class="language-none">mlflow run mlflow/example/tutorial -P alpha=0.4</code></pre></div>
+
+<p>The <code>MLproject</code> specifies the command to run the source code, therefore, the source code can be in any languages, including Python. Projects can be run on many machine learning platforms, including tensorflow, pyspark, scikit-learn and others. If the dependent Python packages are available to download by Anaconda, they can be added to <code>conda.yaml</code> file and <em>MLflow</em> will set up the packages automatically.</p>
+
+<h4 id="toc_5">Models</h4>
+
+<p><code>Models</code> component defines the general model format in the <code>MLmodel</code> file as follow:</p>
+
+<div><pre><code class="language-none">artifact_path: model
+flavors:
+  python_function:
+    data: model.pkl
+    loader_module: mlflow.sklearn
+  sklearn:
+    pickled_model: model.pkl
+    sklearn_version: 0.19.1
+run_id: 0927ac17b2954dc0b4d944e6834817fd
+utc_time_created: &#39;2018-08-06 18:38:16.294557&#39;</code></pre></div>
+
+<p>It specifies different <code>flavors</code> for different tools to deploy and load the model. This allows the model to be saved in its original binary persistence output from the platform training the model. For example, in scikit-learn, the model is serialized with Python <code>pickle</code> package. The model can then be deployed to the environment which understands this format. With the <code>sklearn</code> flavor, if the environment has the scikit-learn installed, it can directly load the model and serve. Otherwise, with the <code>python_function</code> flavor, <em>MLflow</em> provides the <code>mlflow.sklearn</code> Python module as the helper to load the model.</p>
+
+<p>So far <em>Mlflow</em> supports models load, save and deployment with scikit-learn, tensorflow, sagemaker, h2o, azure and spark platforms.</p>
+
+<p>With <em>MLflow</em>&rsquo;s modular design, the current <code>Tracking</code>, <code>Projects</code> and <code>Models</code> components touch most parts of the machine learning lifecycle. Users can also choose to use one component but not the others if they like. With its REST APIs, these components can also be easily integrated into other machine learning workflows.</p>
+
+<h2 id="toc_6">Experiencing MLflow</h2>
+
+<p>Installing <em>MLflow</em> is quick and easy if <a href="https://anaconda.org/">Anaconda</a> has been installed and a virtual env has been created. <code>pip install mlflow</code> will install the latest <em>MLflow</em> release.</p>
+
+<p>To train the model with <code>tensorflow</code>, run <code>pip install tensorflow</code> to install the latest version of <code>tensorflow</code>.</p>
+
+<p>A simple example to train a tensorflow model with following code
+<a href="https://github.com/adrian555/DocsDump/files/tf-example/tf-example.py">tf-example.py</a></p>
+
+<div><pre><code class="language-python">import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+
+import mlflow
+from mlflow import tracking
+
+# load dataset
+dataset = np.loadtxt(&quot;/Users/wzhuang/housing.csv&quot;, delimiter=&quot;,&quot;)
+
+# save the data as artifact
+mlflow.log_artifact(&quot;/Users/wzhuang/housing.csv&quot;)
+
+# split the features and label
+X = dataset[:, 0:15]
+Y = dataset[:, 15]
+
+# define the model
+first_layer_dense = 64
+second_layer_dense = 64
+model = keras.Sequential([
+    keras.layers.Dense(first_layer_dense, activation=tf.nn.relu, 
+                       input_shape=(X.shape[1],)),
+    keras.layers.Dense(second_layer_dense, activation=tf.nn.relu),
+    keras.layers.Dense(1)
+  ])
+  
+# log some parameters
+mlflow.log_param(&quot;First_layer_dense&quot;, first_layer_dense)
+mlflow.log_param(&quot;Second_layer_dense&quot;, second_layer_dense)
+
+optimizer = tf.train.RMSPropOptimizer(0.001)
+
+model.compile(loss=&#39;mse&#39;,
+              optimizer=optimizer,
+              metrics=[&#39;mae&#39;])
+
+# train
+model.fit(X, Y, epochs=500, validation_split=0.2, verbose=0)
+
+# log the model artifact
+model_json = model.to_json()
+with open(&quot;model.json&quot;, &quot;w&quot;) as json_file:
+    json_file.write(model_json)
+mlflow.log_artifact(&quot;model.json&quot;)</code></pre></div>
+
+<p>The first call to the <code>tracking</code> API will start the tracking server and log all the data sent through the current and subsequent APIs. These logged data can then be viewed in the <em>MLflow</em> UI. From the example above, it is quite easy to just call the logging APIs in any place users want to track.</p>
+
+<p>Packaging this project is also very simple by just creating a <a href="https://github.com/adrian555/DocsDump/files/tf-example/MLproject">MLproject</a> file as such:</p>
+
+<div><pre><code class="language-none">name: tf-example
+conda_env: conda.yaml
+entry_points:
+  main:
+    command: &quot;python tf-example.py&quot;</code></pre></div>
+
+<p>with <a href="https://github.com/adrian555/DocsDump/files/tf-example/conda.yaml">conda.yaml</a></p>
+
+<div><pre><code class="language-none">name: tf-example
+channels:
+  - defaults
+dependencies:
+  - python=3.6
+  - numpy=1.14.3
+  - pip:
+    - mlflow
+    - tensorflow</code></pre></div>
+
+<p>Then <code>mlflow run tf-example</code> will run the project on any environment. It first creates a <code>conda</code> environment with the required Python packages installed and then run the <a href="https://github.com/adrian555/DocsDump/files/tf-example/tf-example.py">tf-example.py</a> inside that virtual env. As expected, the run result is also logged to the <em>MLflow</em> tracking server.</p>
+
+<p><em>MLflow</em> also comes with a server implementation where the <code>sklearn</code> and other types of models can be deployed and served. The <a href="https://github.com/mlflow/mlflow"><em>MLflow</em> github README.md</a> illustrates the usage. However, to deploy and serve the model built by the above example requires new code that understands Keras models. This is beyond this blog&rsquo;s scope.</p>
+
+<p>To summarize, the experience with <em>MLflow</em> is smooth. There were several bugs here and there but overall was satisfied with what the project claims to be. Of course since <em>MLflow</em> is still in its alpha phase, bugs and lacking of some features are expected.</p>
+
+<h2 id="toc_7">Things <em>MLflow</em> can be enhanced</h2>
+
+<p><em>MLflow</em> so far provides an open source solution to track the data science processing, package and deploy machine learning model. As it claims, it targets the management of the machine learning lifecycle. The current alpha version releases the <code>Tracking</code>, <code>Projects</code> and <code>Models</code> components that tackle individual stages of the machine learning workflow. The tool is compact in Python language while providing APIs and UI to be integrated with any machine learning platform easily.</p>
+
+<p>However, there are still many places that <em>MLflow</em> may be improved. There are also new features required for the tool to fully manage and monitor all aspects of the lifecycle of machine learning.</p>
+
+<p>At the Databricks&#39; <a href="https://databricks.com/blog/2018/07/25/bay-area-apache-spark-meetup-summary-databricks-hq.html">meetup</a> on 07/19/2018, several items have been mentioned in the longer-term road map of <em>MLflow</em> according to the <a href="https://www.slideshare.net/databricks/mlflow-infrastructure-for-a-complete-machine-learning-life-cycle">presentation</a>. There are four categories, including improving current components, new MLflow Data component, hyperparameter tuning and language and library integrations. Some items are really important so they need extra explain.</p>
+
+<p>Implementing a database backend for <code>Tracking</code> component is included in the first category. As mentioned above, the <em>MLflow</em> tracking server logs every run info in local file system. This looks like a quick and easy implementation. A better solution will be using a database as the tracking store. When the number of machine learning runs grows, database has its obvious advantage on data queries and retrieval. </p>
+
+<p>Model metadata support is also included in the first category. This is extremely important. Current <code>Tracking</code> component does not describe the model and all runs are viewed as a flatten list ordered by date. The tool allows the search based on the parameters and metrics, but it is far away from enough. Users certainly would like to quickly retrieve the models by model name, algorithm, platform etc. This requires metadata input when a model training is tracked. Tracking server logs the file name of the source code. This does not provide any value to identify a model. Instead, it should allow to input a description of the model. Furthermore, the access control is also essential and can be part of the metadata. And model management should also have versioning support.</p>
+
+<p>In the second category, <em>MLflow</em> will introduce a new <code>Data</code> component. It will build on top of <a href="https://spark.apache.org/">Spark</a>&rsquo;s Data Source API and allows projects to load data from many formats. This can be viewed as an effort to tighten the <em>MLflow</em> relationship with <em>Spark</em>. What should be done further is of course maintaining the metadata for the data.</p>
+
+<p>In the fourth category, the integration with R and Java is also important. Although Python today becomes the most adopted language in machine learning, there are many data scientists still using R and other languages. <em>MLflow</em> needs to provide R and Java APIs so those machine learning workflows can be managed as well.</p>
+
+<p>There are other important features not included in the current road map. From this blog&rsquo;s viewpoint, following list of items are also desired and may help complete <em>MLflow</em> as a full machine learning data and model management tool.</p>
+
+<ul>
+<li><p>Register APIs<br>
+<em>MLflow</em> provides the APIs to log run info. These APIs have to be called inside the model training source code and they are called at runtime. This approach becomes inconvenient either users just want to track the previously runs without these APIs, or runs without access to the source code. To solve such problem, a set of REST APIs that can be called post run to register the run info will be very helpful. The run info, such as parameters, metrics and artifacts, can be part of the JSON input.</p></li>
+<li><p>UI view enhancement<br>
+In the <code>Experiments</code> UI view, <code>Parameters</code> and <code>Metrics</code> columns display all parameters and metrics for all runs. The row will become unfriendly long and difficult to view when more types of parameters and metrics are tracked. Instead, for each run, the view should just display a hyperlink to the detailed run info where the parameters and metrics will show only for this run. Furthermore, this approach can help solve the problem on logging </p></li>
+<li><p>Artifact location<br>
+<em>MLflow</em> can take artifacts from either local or github. It would be a great improvement to support the load and save data, source code and model from other sources, such as S3 Object Storage, HDFS, Nexus etc.</p></li>
+<li><p>Import and export<br>
+Once the tracking store is implemented with database as backend, the next thing will be to support import and export all experiments stored in different databases.</p></li>
+<li><p>Run projects remotely<br>
+<code>Projects</code> component specifies the command to run the project and the command is displayed in the tracking UI. But since the project can only run on the specific machine learning platform, which can be different from the tracking server, users still have to connect to the platform remotely and issue the command line. The <code>MLproject</code> specification should include the platform information, such as hostname and credentials. With these info, the tracking UI should add an action to kick off the run through the UI.</p></li>
+<li><p>Tuning<br>
+Adding the parameter tuning functionality through the tracking UI is an important feature. Users will be allowed to change the parameters and kick off the run if the project is tracked by the <code>Projects</code> component.</p></li>
+<li><p>Common model format<br>
+<code>Models</code> component defines <code>flavors</code> for a model. However, every model still stores in its original format only understood by that training tool. There is still gap between the model development and production. <a href="http://dmg.org/pfa/docs/motivation/">Portable Format for Analytics</a> is a specification that can help bridge the gap. <code>MLmode</code> can be improved to understand PFA and/or convert models into PFA for easy deploying models to PFA-enabled platforms.</p></li>
+<li><p>Pipeline integration<br>
+A complete machine learning lifecycle also includes data preparation and other pipelines. <em>MLflow</em> so far only tracks the training step. The <code>MLproject</code> may be enhanced to include the specification of other pipelines. Some pipelines may be shared by projects as well.</p></li>
+</ul>
+
+
+
+
+</body>
+
+</html>

@@ -33,6 +33,7 @@ Every time users train a model on the machine learning platform *MLflow* creates
 The model training source code needs to call *MLflow* APIs to log the data to be tracked. For example, calling `log_metric` to log the metrics and `log_param` to log the parameters.
 
 *MLflow* tracking server currently uses file system to persist all `Experiment` data. The directory structure looks like below:
+
 ```
 mlruns
 └── 0
@@ -54,6 +55,7 @@ Users can search and filter models with `metrics` and `params`, and compare and 
 
 #### Projects
 `Projects` component defines the specification on how to run the model training code. It includes the platform configuration, the dependencies, the source code, the data and others that allows the model training to be executed through *MLflow*. Following is an example provided by the *MLflow*:
+
 ```
 name: tutorial
 
@@ -68,6 +70,7 @@ entry_points:
 ```
 
 The `mlflow run` command looks for `MLproject` file for the spec and download the dependencies if needed, then runs the model training with the source code and data specified in the `MLproject`. 
+
 ```
 mlflow run mlflow/example/tutorial -P alpha=0.4
 ```
@@ -76,6 +79,7 @@ The `MLproject` specifies the command to run the source code, therefore, the sou
 
 #### Models
 `Models` component defines the general model format in the `MLmodel` file as follow:
+
 ```
 artifact_path: model
 flavors:
@@ -88,6 +92,7 @@ flavors:
 run_id: 0927ac17b2954dc0b4d944e6834817fd
 utc_time_created: '2018-08-06 18:38:16.294557'
 ```
+
 It specifies different `flavors` for different tools to deploy and load the model. This allows the model to be saved in its original binary persistence output from the platform training the model. For example, in scikit-learn, the model is serialized with Python `pickle` package. The model can then be deployed to the environment which understands this format. With the `sklearn` flavor, if the environment has the scikit-learn installed, it can directly load the model and serve. Otherwise, with the `python_function` flavor, *MLflow* provides the `mlflow.sklearn` Python module as the helper to load the model.
 
 So far *Mlflow* supports models load, save and deployment with scikit-learn, tensorflow, sagemaker, h2o, azure and spark platforms.
@@ -153,6 +158,7 @@ mlflow.log_artifact("model.json")
 The first call to the `tracking` API will start the tracking server and log all the data sent through the current and subsequent APIs. These logged data can then be viewed in the *MLflow* UI. From the example above, it is quite easy to just call the logging APIs in any place users want to track.
 
 Packaging this project is also very simple by just creating a [MLproject](https://github.com/adrian555/DocsDump/files/tf-example/MLproject) file as such:
+
 ```
 name: tf-example
 conda_env: conda.yaml
@@ -160,7 +166,9 @@ entry_points:
   main:
     command: "python tf-example.py"
 ```
+
 with [conda.yaml](https://github.com/adrian555/DocsDump/files/tf-example/conda.yaml)
+
 ```
 name: tf-example
 channels:
