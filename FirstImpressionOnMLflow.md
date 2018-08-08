@@ -155,7 +155,7 @@ with open("model.json", "w") as json_file:
 mlflow.log_artifact("model.json")
 ```
 
-The first call to the `tracking` API will start the tracking server and log all the data sent through the current and subsequent APIs. These logged data can then be viewed in the *MLflow* UI. From the example above, it is quite easy to just call the logging APIs in any place users want to track.
+The first call to the tracking API will start the tracking server and log all the data sent through the current and subsequent APIs. These logged data can then be viewed in the *MLflow* UI. From the example above, it is quite easy to just call the logging APIs in any place users want to track.
 
 Packaging this project is also very simple by just creating a [MLproject](https://github.com/adrian555/DocsDump/files/tf-example/MLproject) file as such:
 
@@ -208,7 +208,7 @@ There are other important features not included in the current road map. From th
   *MLflow* provides the APIs to log run info. These APIs have to be called inside the model training source code and they are called at runtime. This approach becomes inconvenient either users just want to track the previously runs without these APIs, or runs without access to the source code. To solve such problem, a set of REST APIs that can be called post run to register the run info will be very helpful. The run info, such as parameters, metrics and artifacts, can be part of the JSON input.
 
 * UI view enhancement  
-  In the `Experiments` UI view, `Parameters` and `Metrics` columns display all parameters and metrics for all runs. The row will become unfriendly long and difficult to view when more types of parameters and metrics are tracked. Instead, for each run, the view should just display a hyperlink to the detailed run info where the parameters and metrics will show only for this run. Furthermore, this approach can help solve the problem on logging 
+  In the `Experiments` UI view, `Parameters` and `Metrics` columns display all parameters and metrics for all runs. The row will become unfriendly long and difficult to view when more types of parameters and metrics are tracked. Instead, for each run, the view should just display a hyperlink to the detailed run info where the parameters and metrics will show only for this run.
 
 * Artifact location  
   *MLflow* can take artifacts from either local or github. It would be a great improvement to support the load and save data, source code and model from other sources, such as S3 Object Storage, HDFS, Nexus etc.
