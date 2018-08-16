@@ -82,5 +82,7 @@ sparkR.session.stop()
 You can either copy the script to `R` or [Rstudio](https://www.rstudio.com/) and run interactively, or save it to a file and run with `Rscript` command. Make sure that the `PATH` environment variable includes the path to the *mlflow* Python virtualenv.
 
 Once the script finishes, go to *MLflow* UI, the run is now showing and so it can be tracked. Here is a snapshot.
+
 ![*MLflow* UI snapshot](https://github.com/adrian555/DocsDump/raw/dev/images/mlflow-r.png)
 
+In conclusion, this approach lets R users take benefit of *MLflow* `Tracking` component and track their R models in a quick way. I will show how R users can use the other two components (`Projects` and `Models`) of *MLflow* in future stories.
