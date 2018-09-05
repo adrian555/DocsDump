@@ -94,3 +94,14 @@ entry_points:
 
 In this file, it defines a `r_example` project with a `main` entry point. The entry point specifies the command and parameters to be executed by the `mlflow run`. For this project, `Rscript` is the shell command to invoke the R source code. `r-repo` parameter provides the URL string where the dependent packages can be installed from. A default value is set. This parameter is passed to the command running the R source code.
 
+Now that all are set so the project can be checked in and pushed to github repository. With following command, it can be run on any platform that has R installed.
+
+```commandline
+mlflow run https://github.com/adrian555/DocsDump#files/mlflow-projects/R
+```
+
+The project can also be viewed from the *MLflow* tracking UI like this screen snapshot: ![snapshot-project](https://github.com/adrian555/DocsDump/raw/dev/images/r-mlproject.png)
+
+The differences between this view and previous run without `Mlproject` spec are the `Run Command` which captures the exact command to run the project, and the `Parameters` which automatically logs any parameters passed to entry points.
+
+This is exactly what `Projects` component of *MLflow* is designed for, to define the project and make it easily to be rerun. R users can quickly set up their projects and enjoy the easiness of tracking and running projects with *MLflow* once going through this example.
