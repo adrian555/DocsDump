@@ -1,0 +1,7 @@
+name: r_example
+
+entry_points:
+    main:
+        parameters:
+            r-repo: {type: string, default: "https://cran.r-project.org/"}
+        command: "Rscript rpart-example.R {r-repo}"
