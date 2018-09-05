@@ -14,7 +14,7 @@ First, create a directory and copy the data and R source codes to that directory
     ├── rpart-example.R
     └── wine-quality.csv
 ```
-In this example, the data to be learned is [`wine-quality.csv`](https://github.com/adrian555/DocsDump/raw/dev/files/mlflow.projects/R/wine-quality.csv). The example is to run the [`rpart-example.R`](https://github.com/adrian555/DocsDump/raw/dev/files/mlflow.projects/R/rpart-example.R) to fit a tree model:
+In this example, the data to be learned is [`wine-quality.csv`](https://github.com/adrian555/DocsDump/raw/dev/files/mlflow-projects/R/wine-quality.csv). The example is to run the [`rpart-example.R`](https://github.com/adrian555/DocsDump/raw/dev/files/mlflow-projects/R/rpart-example.R) to fit a tree model:
 
 ```r
 # Source prep.R file to install the dependencies
@@ -50,9 +50,9 @@ dev.off()
 mlflow$log_artifact("rplot.jpg")
 ```
 
-The R code above includes three parts: the model training, the artifacts logging through *MLflow*, and the R package dependencies installation.
+The R code above includes three parts: the model training, the artifacts logging through *MLflow*, and the R package dependencies installation. In this example, these two R packages, `reticulate` and `rpart`, are required for the code to run. To pack these codes into a self-contained project, some sort of script should be run to automatically install these packages if the platform does not have them installed. 
 
-Any specific R package needed for the project is going to be installed through [`prep.R`](https://github.com/adrian555/DocsDump/raw/dev/files/mlflow.projects/R/prep.R) with these codes:
+With our approach, any specific R package needed for the project is going to be installed through [`prep.R`](https://github.com/adrian555/DocsDump/raw/dev/files/mlflow-projects/R/prep.R) with these codes:
 
 ```r
 # Accept parameters, args[6] is the R package repo url
@@ -78,4 +78,19 @@ Before packaging these into a *MLproject*, try to test by directly invoking `Rsc
 Rscript rpart-example.R https://cran.r-project.org/
 ```
 
-From the *MLflow* UI, you should see this run been tracked like this screen [snapshot](https://github.com/adrian555/DocsDump/raw/dev/images/r-mlproject-bare.png):
+From the *MLflow* UI, you should see this run been tracked like this screen snapshot:![snapshot](https://github.com/adrian555/DocsDump/raw/dev/images/r-mlproject-bare.png)
+
+Now let's write the spec and pack this project into a *MLproject* that *MLflow* knows to run. All needed to be done is creating the [`MLproject`](https://github.com/adrian555/DocsDump/raw/dev/files/mlflow-projects/R/MLproject) file in the same directory.
+
+```yaml
+name: r_example
+
+entry_points:
+    main:
+        parameters:
+            r-repo: {type: string, default: "https://cran.r-project.org/"}
+        command: "Rscript rpart-example.R {r-repo}"
+```
+
+In this file, it defines a `r_example` project with a `main` entry point. The entry point specifies the command and parameters to be executed by the `mlflow run`. For this project, `Rscript` is the shell command to invoke the R source code. `r-repo` parameter provides the URL string where the dependent packages can be installed from. A default value is set. This parameter is passed to the command running the R source code.
+
