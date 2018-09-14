@@ -105,7 +105,7 @@ Installing *MLflow* is quick and easy if [Anaconda](https://anaconda.org/) has b
 To train the model with `tensorflow`, run `pip install tensorflow` to install the latest version of `tensorflow`.
 
 A simple example to train a tensorflow model with following code
-[tf-example.py](https://github.com/adrian555/DocsDump/files/tf-example/tf-example.py)
+[tf-example.py](https://github.com/adrian555/DocsDump/blob/master/files/tf-example/tf-example.py)
 
 ```python
 import tensorflow as tf
@@ -157,7 +157,7 @@ mlflow.log_artifact("model.json")
 
 The first call to the tracking API will start the tracking server and log all the data sent through the current and subsequent APIs. These logged data can then be viewed in the *MLflow* UI. From the example above, it is quite easy to just call the logging APIs in any place users want to track.
 
-Packaging this project is also very simple by just creating a [MLproject](https://github.com/adrian555/DocsDump/files/tf-example/MLproject) file as such:
+Packaging this project is also very simple by just creating a [MLproject](https://github.com/adrian555/DocsDump/blob/master/files/tf-example/MLproject) file as such:
 
 ```
 name: tf-example
@@ -167,7 +167,7 @@ entry_points:
     command: "python tf-example.py"
 ```
 
-with [conda.yaml](https://github.com/adrian555/DocsDump/files/tf-example/conda.yaml)
+with [conda.yaml](https://github.com/adrian555/DocsDump/blob/master/files/tf-example/conda.yaml)
 
 ```
 name: tf-example
@@ -181,7 +181,7 @@ dependencies:
     - tensorflow
 ```
 
-Then `mlflow run tf-example` will run the project on any environment. It first creates a `conda` environment with the required Python packages installed and then run the [tf-example.py](https://github.com/adrian555/DocsDump/files/tf-example/tf-example.py) inside that virtual env. As expected, the run result is also logged to the *MLflow* tracking server.
+Then `mlflow run tf-example` will run the project on any environment. It first creates a `conda` environment with the required Python packages installed and then run the [tf-example.py](https://github.com/adrian555/DocsDump/blob/master/files/tf-example/tf-example.py) inside that virtual env. As expected, the run result is also logged to the *MLflow* tracking server.
 
 *MLflow* also comes with a server implementation where the `sklearn` and other types of models can be deployed and served. The [*MLflow* github README.md](https://github.com/mlflow/mlflow) illustrates the usage. However, to deploy and serve the model built by the above example requires new code that understands Keras models. This is beyond this blog's scope.
 
