@@ -64,7 +64,7 @@ airflow test tutorial print_date 2015-06-01
 
 * Sensor
 
-* DockerOperator
+* DockerOperator - execute a command inside a docker container
 
 * S3FileTransformOperator
 
@@ -73,6 +73,24 @@ airflow test tutorial print_date 2015-06-01
 * SlackOperator
 
 * BranchPythonOperator
+
+* SubDagOperator
+
+* TriggerDagRunOperator
+
+* AWSBatchOperator
+
+* BigQueryCheckOperator, BigQueryValueCheckOperator, BigQueryIntervalCheckOperator,
+
+* DatabrickSubmitRunOperator
+
+* KubernetesPodOperator - execute a task in a Kubernetes pod
+
+* MLEngineModelOperator - manage a Google Cloud ML Engine model
+
+* MLEngineTrainingOperator
+
+* SageMakerTrainingOperator, SageMakeModelOperator, SageMakerTransformOperator, ...
 
 Allow remote logging.
 
@@ -131,3 +149,17 @@ apt-get install build-essential
 The Airflow scheduler monitors all tasks and all DAGs, and triggers the task instances whose dependencies have been met. Behind the scenes, it monitors and stays in sync with a folder for all DAG objects it may contain, and periodically (every minute or so) inspects active tasks to see whether they can be triggered.
 
 ## Plugins
+
+For external features to its core by simply dropping files in the `plugins` folder. The Python modules there will get imported and `hooks`, `operators`, `sensors`, `macros`, `executors` and web `views` then become available for use.
+
+## Experimental Rest API
+
+GET /api/experimental/dags/<DAG_ID>/tasks/<Task_ID>
+POST /api/expermiental/dags/<DAG_ID>/dag_runs
+
+## Sensors
+
+* ExternalTaskSensor - wait for a task to complete in a different DAG
+* HdfsSensor - wait for a file or folder to land in HDFS
+* HivePartitionSensor - wait for a partition to show up in Hive
+* HttpSensor -
