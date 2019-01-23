@@ -15,13 +15,36 @@ apt-get install socat
 ```
 
 * Deploy kubeflow pipelines
+[0.1.6 link](https://github.com/kubeflow/pipelines/releases)
 
 ```command line
-PIPELINE_VERSION=0.1.2
-kubectl create -f https://storage.googleapis.com/ml-pipeline/release/$PIPELINE_VERSION/bootstrapper.yaml
+PIPELINE_VERSION=0.1.6
+wget https://storage.googleapis.com/ml-pipeline/release/$PIPELINE_VERSION/bootstrapper.yaml
 ```
 
-GITHUB_TOKEN `e255233685ea8406a676d6667a57e997d6cb1dd6`
+Edit the bootstrapper.yaml file as such
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: deploy-ml-pipeline-
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      name: deploy-ml-pipeline
+    spec:
+      containers:
+      - name: deploy
+        env:
+        - name: GITHUB_TOKEN
+          value: 703fcd79bfab9ae1f8c29e7fd5135fd92d1224c3
+```
+
+above add the GITHUB_TOKEN to the depoly-ml-pipeline container.
+
+Once it is done, run `kubectl create -f bootstrapper.yaml` to deploy the pipeline service.
 
 * kubectl port forward:
 
@@ -29,6 +52,10 @@ GITHUB_TOKEN `e255233685ea8406a676d6667a57e997d6cb1dd6`
 export NAMESPACE=kubeflow
 kubectl port-forward -n ${NAMESPACE} $(kubectl get pods -n ${NAMESPACE} --selector=service=ambassador -o jsonpath='{.items[0].metadata.name}') 8080:80 --address 0.0.0.0&
 ```
+
+* Troubleshooting:
+
+[rate limit 403](https://www.kubeflow.org/docs/guides/troubleshooting/)
 
 Provide Jupyter Notebook support.
 

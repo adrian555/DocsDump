@@ -81,7 +81,7 @@ rm minikube
 Now minikube can be start as follow:
 
 ```command line
-minikube start --vm-driver=none --cpus 4 --memory 8192 --disk-size=40g
+minikube start --vm-driver=none --cpus 6 --memory 12288 --disk-size=120g
 ```
 
 The minikube cluster should now be up and running. To test, run following service:
@@ -152,3 +152,14 @@ Delete a k8s deployment
 kubectl delete deployment ffdl
 ```
 
+Add daemon.json for insecure docker registry to `/etc/docker/daemon.json` file with
+
+```text
+{ "insecure-registries":["minikube1.fyre.ibm.com:5000"] }
+```
+
+then restart the docker service
+
+```command line
+service docker restart
+```
