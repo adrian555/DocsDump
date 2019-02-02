@@ -4,7 +4,7 @@ Install docker:
 
 ```command line
 yum install docker -y
-yum restart docker
+systemctl restart docker
 ```
 
 Generate ssh key if not yet:
