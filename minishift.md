@@ -4,7 +4,7 @@ Install docker:
 
 ```command line
 yum install docker -y
-yum restart docker
+systemctl restart docker
 ```
 
 Generate ssh key if not yet:
@@ -17,7 +17,7 @@ ssh-copy-id root@localhost
 Install minishift from [link](https://github.com/minishift/minishift/releases)
 
 ```command line
-curl -L -o minishift.tgz https://github.com/minishift/minishift/releases/download/v1.30.0/minishift-1.30.0-linux-amd64.tgz
+curl -L -o minishift.tgz https://github.com/minishift/minishift/releases/download/v1.31.0/minishift-1.31.0-linux-amd64.tgz
 tar zxvf minishift.tgz
 cp minishift*linux*/minishift /usr/local/bin
 ```
@@ -26,8 +26,16 @@ Start minishift with generic vm-driver:
 
 ```command line
 export VM_IP=<vm_ip_address>
-minishift start --vm-driver=generic --remote-ipaddress=$VM_IP --remote-ssh-user=root --remote-ssh-key=/root/.ssh/id_rsa --cpus 6 --memory 12G --disk-size 120g
+minishift start --vm-driver=generic --remote-ipaddress=$VM_IP --remote-ssh-user=root --remote-ssh-key=/root/.ssh/id_rsa --cpus 6 --memory 12G --disk-size 240g
 ```
+
+Note, if got `403 API rate limit` error, set following and try to restart minishift.
+
+```command line
+export MINISHIFT_GITHUB_API_TOKEN=552aa53883753a95a91e5a43b367624310cb6dd5
+```
+
+Add path to `oc` in .bash_profile `/var/lib/minishift/bin`.
 
 Log in to minishift with admin:
 
