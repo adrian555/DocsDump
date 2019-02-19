@@ -43,6 +43,21 @@ Log in to minishift with admin:
 oc login -u system:admin
 ```
 
+(optional) Install `kubectl` [*link*](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+
+```command line
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+yum install -y kubectl
+```
+
 # Install minishift on ubuntu
 
 [link](https://docs.okd.io/latest/minishift/getting-started/setting-up-virtualization-environment.html)
