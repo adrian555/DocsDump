@@ -234,7 +234,13 @@ ln -s /usr/bin/s3fs /usr/local/bin/s3fs
         name: static-volumes-v2
         namespace: myproject
     EOF
+    ```
 
+    Note: if the namespace to deploy FfDL is different than `myproject`, replace the `namespace` field in the `pvc-config.yaml` file above with your namespace value.
+
+    Now create the PVC as follow:
+
+    ```command line
     oc apply -f pvc-config.yaml
     ```
 
