@@ -234,7 +234,13 @@ ln -s /usr/bin/s3fs /usr/local/bin/s3fs
         name: static-volumes-v2
         namespace: myproject
     EOF
+    ```
 
+    Note: if the namespace to deploy FfDL is different than `myproject`, replace the `namespace` field in the `pvc-config.yaml` file above with your namespace value.
+
+    Now create the PVC as follow:
+
+    ```command line
     oc apply -f pvc-config.yaml
     ```
 
@@ -269,11 +275,21 @@ echo http://$(minishift ip):$(oc get service minio-service -o jsonpath='{.spec.p
 
 Copy the URL to a web browser will open up the access to the Minio service. The `access_key` and `secret_access_key` are default to `minio` and `minio123` as they are saved in the [deployment.yaml](https://github.com/minio/minio/blob/master/docs/orchestration/kubernetes/minio-standalone-deployment.yaml?raw=true) file.
 
-With all preparation done above, we can now run some serious deep learning model training. Following we will show a couple of model training examples.
+With all preparation done above, we can now run some serious deep learning model training. There are general four steps to take for starting a training job:
+
+    1. upload the train data to the cloud object storage
+    2. develop the model training code using one of the supported deep learning frameworks, and pack the code into a model definition file in `zip` format
+    3. create a `manifest.yaml` file describing the deep learning framework and resource requirement
+    4. upload the model definition file and `manifest.yaml` file to FfDL UI and submit the job
+
+
+Following we will show a couple of model training examples.
 
 ## - Train handwriting recognition model with TensorFlow through FfDL
 
 This deep learning model train code can be retrieved from FfDL [github](https://github.com/IBM/FfDL/tree/master/etc/examples/tf-model) or [here](files/FfDL-example).
+
+
 
 FfDL UI takes a model train code in a `zip` format file and a `manifest` in `yaml` format file to kick off a training job. To try out this example, run following command to compress the TensorFlow code:
 
