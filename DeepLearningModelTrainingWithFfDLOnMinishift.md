@@ -265,7 +265,9 @@ node_ip=$(minishift ip)
 echo "Web UI: http://$node_ip:$ui_port/#/login?endpoint=$node_ip:$restapi_port&username=test-user"
 ```
 
-Paste the URL to a web browser and you are ready to submit your first training job through FfDL. ![FfDL UI](https://github.com/adrian555/DocsDump/raw/dev/images/FfDL-ui.png)
+Paste the URL to a web browser and you are ready to submit your first training job through FfDL. 
+
+![FfDL UI](https://github.com/adrian555/DocsDump/raw/dev/images/FfDL-ui.png)
 
 ## - Obtain access to a cloud object store
 
