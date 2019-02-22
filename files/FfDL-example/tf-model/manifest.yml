@@ -11,13 +11,13 @@ data_stores:
   - id: sl-internal-os
     type: s3_datastore
     training_data:
-      container: <data_input_bucket>
+      container: tf_training_data
     training_results:
-      container: <model_output_bucket>
+      container: tf_trained_model
     connection:
       auth_url: <s3_endpoint_url>
-      user_name: <s3_access_key>
-      password: <s3_secret_access_key>
+      user_name: test
+      password: test
 
 framework:
   name: tensorflow

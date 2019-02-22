@@ -269,42 +269,74 @@ Paste the URL to a web browser and you are ready to submit your first training j
 
 ## - Obtain access to a cloud object store
 
-FfDL loads train data from and stores the models to a S3 cloud object store. Collect the object store credentials including `endpoint url`, `access key id` and `secret access key`.
+FfDL loads train data from and stores the models to a S3 cloud object store. Collect the object store credentials including `endpoint url`, `access key id` and `secret access key` from the AWS or any other S3 cloud object store you will load data from and save models to.
 
-You can also use the S3 service deployed with FfDL https://github.com/IBM/FfDL/blob/master/docs/detailed-installation-guide.md#21-using-ffdl-local-s3-based-object-storage
-If you do need to set up your own S3 type of cloud storage, deploying a [Minio](https://docs.minio.io/) server is a quick.
-
-```command line
-oc create -f https://github.com/minio/minio/blob/master/docs/orchestration/kubernetes/minio-standalone-pvc.yaml?raw=true
-oc create -f https://github.com/minio/minio/blob/master/docs/orchestration/kubernetes/minio-standalone-deployment.yaml?raw=true
-oc create -f https://github.com/minio/minio/blob/master/docs/orchestration/kubernetes/minio-standalone-service.yaml?raw=true
-```
-
-Once the service is up, run following to retrieve the URL link:
+On the other hand, if it is just for model development and experiments, you can also use the S3 object store service deployed with FfDL above as storage. Run following command to retrieve the `endpoint-url` of this S3:
 
 ```command line
-echo http://$(minishift ip):$(oc get service minio-service -o jsonpath='{.spec.ports[0].nodePort}')
+s3_port=$(oc get service s3 -o jsonpath='{.spec.ports[0].nodePort}')
+node_ip=$(minishift ip)
+s3_endpoint_url="http://$node_ip:$s3_port"
+echo $s3_endpoint_url
 ```
 
-Copy the URL to a web browser will open up the access to the Minio service. The `access_key` and `secret_access_key` are default to `minio` and `minio123` as they are saved in the [deployment.yaml](https://github.com/minio/minio/blob/master/docs/orchestration/kubernetes/minio-standalone-deployment.yaml?raw=true) file.
+the `access_key_id` and `secret_access_key` are both `test`.
 
-With all preparation done above, we can now run some serious deep learning model training. There are general four steps to take for starting a training job:
+To access this S3, install AWS CLI with `pip` install as follow:
+
+```command line
+# if python or pip is not installed, install them first
+# yum install -y python python-pip
+pip install awscli
+```
+
+Once AWS CLI is installed, run following command to configure the access
+
+```command line
+aws configure
+## AWS Access Key ID [None]: test
+## AWS Secret Access Key [None]: test
+## Default region name [None]: us-east
+## Default output format [None]:
+```
+
+Refer to [`Using FfDL Local S3 Based Object Storage`](https://github.com/IBM/FfDL/blob/helm-patch/docs/detailed-installation-guide.md#21-using-ffdl-local-s3-based-object-storage) section in FfDL project for more info.
+
+## - Model training with FfDL
+
+With all preparation done above, we can now run some serious deep learning model training. Refer to the [`User Guide`](https://github.com/IBM/FfDL/blob/helm-patch/docs/user-guide.md) for how to train deep learning models on FfDL.
+
+Generally, there are four steps to take for starting a training job:
 
 1. upload the train data to the cloud object storage
 2. develop the model training code using one of the supported deep learning frameworks, and pack the code into a model definition file in `zip` format
 3. create a `manifest.yaml` file describing the deep learning framework and resource requirement
 4. upload the model definition file and `manifest.yaml` file to FfDL UI and submit the job
 
+This tutorial will end with a model training example using `TensorFlow` framework.
 
-Following we will show a couple of model training examples.
-
-## - Train handwriting recognition model with TensorFlow through FfDL
+* Train handwriting recognition model with TensorFlow through FfDL
 
 This deep learning model train code can be retrieved from FfDL [github](https://github.com/IBM/FfDL/tree/master/etc/examples/tf-model) or [here](files/FfDL-example).
 
+First thing is to upload the training data to S3 object store. When using the S3 service deployed by FfDL, follow the instructions in the [link](https://github.com/IBM/FfDL/blob/helm-patch/docs/detailed-installation-guide.md#21-using-ffdl-local-s3-based-object-storage) to upload the image files from MNIST datasets, as follow:
 
+```command line
+aws --endpoint-url=$s3_endpoint_url s3 mb s3://tf_training_data
+aws --endpoint-url=$s3_endpoint_url s3 mb s3://tf_trained_model
+mkdir tmp
+for file in t10k-images-idx3-ubyte.gz t10k-labels-idx1-ubyte.gz train-images-idx3-ubyte.gz train-labels-idx1-ubyte.gz;
+do
+  test -e tmp/$file || wget -q -O tmp/$file http://yann.lecun.com/exdb/mnist/$file
+  aws --endpoint-url=$s3_endpoint_url s3 cp tmp/$file s3://tf_training_data/$file
+done
+```
 
-FfDL UI takes a model train code in a `zip` format file and a `manifest` in `yaml` format file to kick off a training job. To try out this example, run following command to compress the TensorFlow code:
+Two buckets are created above, `tf_training_data` bucket is for storing data and `tf_trained_model` bucket is to store the training results including model itself.
+
+Now that the training data is uploaded, continue to prepare the model train code. Users can develop model train code in any language that is supported by the deep learning framework they choose. For example, for `TensorFlow`, the model train code may be written in Python.
+
+FfDL UI takes a model train code in a `zip` format file and a `manifest` file in `yaml` format to kick off a training job. To try out this example, run following command to compress the TensorFlow code:
 
 ```command line
 pushd tf-model
@@ -312,3 +344,14 @@ zip -j tf-model convolutional_network.py input_data.py
 popd
 ```
 
+Similar command can be run to pack your own model train code.
+
+The `manifest.yml` specifies the `cpus` and `memory` resources, the object store credentials, the deep learning framework and other info related to the model training job. Modify the example [`manifest.yml`](files/FfDL-example/tf-model/manifest.yml) to use the FfDL S3 service by replacing the value of `auth_url` key to your cluster's `s3_endpoint_url`.
+
+If you are other S3 cloud object store, update the `training_data`, `training_results` and `connection` sections accordingly.
+
+Last step is to choose the `tf-model.zip` and `manifest.yml` files from above in FfDL UI, click on the ![`Submit Training Job`](images/FfDL-job-submit.png) to start the model training. The training job should be showed up in the `Training Jobs` list. Wait for the `Status` to change from `PENDING` to `COMPLETED` until the model training finishes. The trained model is saved in the `tf_trained_model` bucket.
+
+## - Conclusion
+
+This tutorial provides step-by-step guidance on running a Minishift cluster locally on a VM or host, then deploying FfDL on Minishift, and finally running model training on FfDL. Specifically this tutorial shows how to work around the known issue on the current Minishift release. It should hopefully help data scientists eliminate the frustration with the deployment of a powerful fabric for deep learning on a Kubernetes containerized environment, while enjoy the better user experience on deep learning model training with FfDL.
