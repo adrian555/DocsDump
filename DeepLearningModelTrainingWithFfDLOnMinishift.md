@@ -61,7 +61,7 @@ As part of the Minishift start process, OpenShift `oc` command is added to the `
 export PATH=$PATH:/var/lib/minishift/bin
 ```
 
-## - Prepare one PersistentVolume
+## - Prepare one PersistentVolume for FfDL trainer pod
 
 Minishift creates 100 `PersistentVolume`s when the cluster starts. We will claim one of these PVs to store the FfDL training job info.
 
@@ -244,7 +244,17 @@ ln -s /usr/bin/s3fs /usr/local/bin/s3fs
     oc apply -f pvc-config.yaml
     ```
 
-Once all steps succeed, the FfDL is fully installed and is ready to accept model training jobs.
+Once all steps succeed, you should see following pods and services are running:
+
+![FfDL-pods](images/FfDL-pods.png)
+
+There are three infrastructure pods (`etcd0-0`, `mongo-0`, `storage-0`) and five service pods (`ffdl-ui`, `ffdl-restapi`, `ffdl-trainer`, `ffdl-trainingdata`, `ffdl-lcm`) running after FfDL is deployed. `Note names for FfDL pods are randomly generated, so you may see different names than what are in above screenshot.
+
+![FfDL-services](images/FfDL-services.png)
+
+Accordingly there are five FfDL services are running, including `ffdl-ui`, `ffdl-restapi`, `ffdl-trainer`, `ffdl-trainingdata` and `ffdl-lcm`. Note the port number for each service may be different than what is in above screenshot. A local S3 object store service with `s3` name is also deployed.
+
+Now the FfDL is fully installed and is ready to accept model training jobs.
 
 Run following commands to get the URL link to the FfDL UI:
 
@@ -259,7 +269,10 @@ Paste the URL to a web browser and you are ready to submit your first training j
 
 ## - Obtain access to a cloud object store
 
-FfDL loads train data from and stores the models to a cloud object store. If you do need to set up your own S3 type of cloud storage, deploying a [Minio](https://docs.minio.io/) server is a quick.
+FfDL loads train data from and stores the models to a S3 cloud object store. Collect the object store credentials including `endpoint url`, `access key id` and `secret access key`.
+
+You can also use the S3 service deployed with FfDL https://github.com/IBM/FfDL/blob/master/docs/detailed-installation-guide.md#21-using-ffdl-local-s3-based-object-storage
+If you do need to set up your own S3 type of cloud storage, deploying a [Minio](https://docs.minio.io/) server is a quick.
 
 ```command line
 oc create -f https://github.com/minio/minio/blob/master/docs/orchestration/kubernetes/minio-standalone-pvc.yaml?raw=true
