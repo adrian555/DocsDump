@@ -277,10 +277,10 @@ Copy the URL to a web browser will open up the access to the Minio service. The 
 
 With all preparation done above, we can now run some serious deep learning model training. There are general four steps to take for starting a training job:
 
-    1. upload the train data to the cloud object storage
-    2. develop the model training code using one of the supported deep learning frameworks, and pack the code into a model definition file in `zip` format
-    3. create a `manifest.yaml` file describing the deep learning framework and resource requirement
-    4. upload the model definition file and `manifest.yaml` file to FfDL UI and submit the job
+1. upload the train data to the cloud object storage
+2. develop the model training code using one of the supported deep learning frameworks, and pack the code into a model definition file in `zip` format
+3. create a `manifest.yaml` file describing the deep learning framework and resource requirement
+4. upload the model definition file and `manifest.yaml` file to FfDL UI and submit the job
 
 
 Following we will show a couple of model training examples.
