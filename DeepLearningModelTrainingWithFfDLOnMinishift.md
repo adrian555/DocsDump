@@ -246,11 +246,11 @@ ln -s /usr/bin/s3fs /usr/local/bin/s3fs
 
 Once all steps succeed, you should see following pods and services are running:
 
-![FfDL-pods](images/FfDL-pods.png)
+![FfDL-pods](https://github.com/adrian555/DocsDump/raw/dev/images/FfDL-pods.png)
 
 There are three infrastructure pods (`etcd0-0`, `mongo-0`, `storage-0`) and five service pods (`ffdl-ui`, `ffdl-restapi`, `ffdl-trainer`, `ffdl-trainingdata`, `ffdl-lcm`) running after FfDL is deployed. `Note names for FfDL pods are randomly generated, so you may see different names than what are in above screenshot.
 
-![FfDL-services](images/FfDL-services.png)
+![FfDL-services](https://github.com/adrian555/DocsDump/raw/dev/images/FfDL-services.png)
 
 Accordingly there are five FfDL services are running, including `ffdl-ui`, `ffdl-restapi`, `ffdl-trainer`, `ffdl-trainingdata` and `ffdl-lcm`. Note the port number for each service may be different than what is in above screenshot. A local S3 object store service with `s3` name is also deployed.
 
@@ -265,7 +265,7 @@ node_ip=$(minishift ip)
 echo "Web UI: http://$node_ip:$ui_port/#/login?endpoint=$node_ip:$restapi_port&username=test-user"
 ```
 
-Paste the URL to a web browser and you are ready to submit your first training job through FfDL. ![FfDL UI](images/FfDL-ui.png)
+Paste the URL to a web browser and you are ready to submit your first training job through FfDL. ![FfDL UI](https://github.com/adrian555/DocsDump/raw/dev/images/FfDL-ui.png)
 
 ## - Obtain access to a cloud object store
 
@@ -317,7 +317,7 @@ This tutorial will end with a model training example using `TensorFlow` framewor
 
 * Train handwriting recognition model with TensorFlow through FfDL
 
-This deep learning model train code can be retrieved from FfDL [github](https://github.com/IBM/FfDL/tree/master/etc/examples/tf-model) or [here](files/FfDL-example).
+This deep learning model train code can be retrieved from FfDL [github](https://github.com/IBM/FfDL/tree/master/etc/examples/tf-model) or [here](https://github.com/adrian555/DocsDump/raw/dev/files/FfDL-example).
 
 First thing is to upload the training data to S3 object store. When using the S3 service deployed by FfDL, follow the instructions in the [link](https://github.com/IBM/FfDL/blob/helm-patch/docs/detailed-installation-guide.md#21-using-ffdl-local-s3-based-object-storage) to upload the image files from MNIST datasets, as follow:
 
@@ -346,11 +346,11 @@ popd
 
 Similar command can be run to pack your own model train code.
 
-The `manifest.yml` specifies the `cpus` and `memory` resources, the object store credentials, the deep learning framework and other info related to the model training job. Modify the example [`manifest.yml`](files/FfDL-example/tf-model/manifest.yml) to use the FfDL S3 service by replacing the value of `auth_url` key to your cluster's `s3_endpoint_url`.
+The `manifest.yml` specifies the `cpus` and `memory` resources, the object store credentials, the deep learning framework and other info related to the model training job. Modify the example [`manifest.yml`](https://github.com/adrian555/DocsDump/raw/dev/files/FfDL-example/tf-model/manifest.yml) to use the FfDL S3 service by replacing the value of `auth_url` key to your cluster's `s3_endpoint_url`.
 
-If you are other S3 cloud object store, update the `training_data`, `training_results` and `connection` sections accordingly.
+If you are using other S3 cloud object store, update the `training_data`, `training_results` and `connection` sections accordingly.
 
-Last step is to choose the `tf-model.zip` and `manifest.yml` files from above in FfDL UI, click on the ![`Submit Training Job`](images/FfDL-job-submit.png) to start the model training. The training job should be showed up in the `Training Jobs` list. Wait for the `Status` to change from `PENDING` to `COMPLETED` until the model training finishes. The trained model is saved in the `tf_trained_model` bucket.
+Last step is to choose the `tf-model.zip` and `manifest.yml` files from above in FfDL UI, click on the ![`Submit Training Job`](https://github.com/adrian555/DocsDump/raw/dev/images/FfDL-job-submit.png) to start the model training. The training job should be showed up in the `Training Jobs` list. Wait for the `Status` to change from `PENDING` to `COMPLETED` until the model training finishes. The trained model is saved in the `tf_trained_model` bucket.
 
 ## - Conclusion
 
