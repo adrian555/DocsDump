@@ -78,6 +78,38 @@ minishift stop
 minishift start --vm-driver=generic --remote-ipaddress=$VM_IP --remote-ssh-user=root --remote-ssh-key=/root/.ssh/id_rsa --cpus <num_cpus> --memory <memory_size> --disk-size <disk_size>
 ```
 
+## - Install IBM Cloud Object Storage plug-in
+
+[IBM Cloud Object Storage plug-in](https://github.com/IBM/ibmcloud-object-storage-plugin/) is a Kubernetes volume plug-in that enables Kubernetes pods to access IBM Cloud Object Storage buckets. FfDL uses `ibmc-s3fs` to mount IBM S3 cloud object store.
+
+1. Download `ibmc-s3fs`
+
+```command line
+curl -L https://github.com/IBM/FfDL/blob/master/bin/ibmc-s3fs?raw=true -o ibmc-s3fs
+chmod +x ibmc-s3fs
+```
+
+2. Retrieve the container of Minishift node
+
+```command line
+origin_node=$(docker ps --filter "name=origin" --format "{{.ID}}")
+```
+
+3. Install `ibmc-s3fs` plugin
+
+```command line
+docker cp ibmc-s3fs $origin_node:/root
+docker exec -i $origin_node /bin/bash <<EOF
+yum install -y epel-release
+yum install -y s3fs-fuse
+ln -s /usr/bin/s3fs /usr/local/bin/s3fs
+mkdir -p /usr/libexec/kubernetes/kubelet-plugins/volume/exec/ibm~ibmc-s3fs
+cp /root/ibmc-s3fs /usr/libexec/kubernetes/kubelet-plugins/volume/exec/ibm~ibmc-s3fs
+chmod +x /usr/libexec/kubernetes/kubelet-plugins/volume/exec/ibm~ibmc-s3fs/ibmc-s3fs
+EOF
+docker restart $origin_node
+```
+
 ## - Deploy FfDL service
 
 After the Minishift cluster starts, the default project `myproject` is created. This is also the namespace where the FfDL service will be deployed. We need to make some tweaks to the instructions in the FfDL project [link](https://github.com/IBM/FfDL/tree/helm-patch) so that FfDL can be deployed on a Minishift cluster. Following are step by step instructions.
