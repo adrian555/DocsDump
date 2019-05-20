@@ -70,7 +70,7 @@ Follow the official instruction [here](https://github.com/kubernetes/minikube/re
 
 ```command line
 # download minikube
-curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.30.0/minikube-linux-amd64
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/v1.0.0/minikube-linux-amd64
 
 # move to /usr/local/bin directory
 chmod +x minikube
@@ -81,7 +81,7 @@ rm minikube
 Now minikube can be start as follow:
 
 ```command line
-minikube start --vm-driver=none --cpus 6 --memory 12288 --disk-size=120g
+minikube start --vm-driver=none --cpus 6 --memory 12288 --disk-size=120g --extra-config=apiserver.authorization-mode=RBAC --extra-config=kubelet.resolv-conf=/run/systemd/resolve/resolv.conf --extra-config kubeadm.ignore-preflight-errors=SystemVerification
 ```
 
 The minikube cluster should now be up and running. To test, run following service:
