@@ -2,7 +2,7 @@ FROM python:3 as manifests
 
 RUN pip3 install operator-courier==1.0.2
 COPY operators operators
-RUN for file in ./operators/*; do if [[ -d $file ]]; then operator-courier nest $file/olm /manifests/$(basename $file); fi done
+RUN for file in ./operators/*; do if [ -d $file ]; then operator-courier nest $file/olm /manifests/$(basename $file); fi done
 
 FROM quay.io/operator-framework/upstream-registry-builder:v1.1.0 as builder
 COPY --from=manifests /manifests manifests
