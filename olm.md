@@ -39,6 +39,14 @@ kubectl create -f deploy/crds/openaihub_v1alpha1_ffdl_crd.yaml
 kubectl patch crd ffdls.ffdl.ibm.com -p '{"metadata":{"finalizers": null}}'
 ```
 
+```command line
+export NAMESPACE=your-rogue-namespace
+kubectl delete ns $NAMESPACE --force --grace-period=0
+kubectl proxy &
+kubectl get namespace $NAMESPACE -o json |jq '.spec = {"finalizers":[]}' >temp.json
+curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$NAMESPACE/finalize
+```
+
 ## helm install/uninstall
 
 ```command line
@@ -115,3 +123,11 @@ EOF
 ```command line
 kubectl api-resources --verbs=list -o name | xargs -n 1 kubectl get -o name
 ```
+
+========================
+
+install operator from operatorhub.io
+
+```command line
+# install OLM
+curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.0/install.sh | bash -s 0.10.0
