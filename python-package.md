@@ -14,7 +14,7 @@ To upload to test pypi package repository, run
 python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
 
-To upload to pypi package repository, run
+To upload to pypi package repository, run `adrian555:n2a4T1F3%`
 
 ```command line
 python3 -m twine upload dist/*

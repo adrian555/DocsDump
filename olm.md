@@ -131,3 +131,71 @@ install operator from operatorhub.io
 ```command line
 # install OLM
 curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.0/install.sh | bash -s 0.10.0
+
+
+====================
+
+To create the operator in a specific namespace
+
+1. create the catalog source in that namespace
+
+```yaml
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: openaihub-catalog
+  namespace: kubeflow
+spec:
+  sourceType: grpc
+  image: ffdlops/operators:v0.0.1
+  imagePullPolicy: Always
+  displayName: OpenAIHub Operators
+  publisher: IBM
+```
+
+2. create an opreatorgroup in that namespace
+
+```command line
+cat << EOF | kubectl create -f -
+apiVersion: operators.coreos.com/v1alpha2
+kind: OperatorGroup
+metadata:
+  name: global-operators
+EOF
+
+3. create the subscription and point the sourceNamespace to that namespace
+
+```yaml
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: my-pachyderm
+  namespace: kubeflow
+spec:
+  channel: alpha
+  name: pachyderm
+  source: openaihub-catalog
+  sourceNamespace: kubeflow
+```
+
+4. create customresource with `-n` to that namespace
+
+docker run -ti --rm -v `pwd`:/workspace -v $(PWD)/config.json:/root/.docker/config.json:ro gcr.io/kaniko-project/executor:latest --dockerfile=Dockerfile --destination=ffdlops/test-kaniko:v0.0.1
+
+docker run -ti --entrypoint=/busybox/sh --rm -v `pwd`:/workspace -v $(PWD)/config.json:/kaniko/.docker/config.json:ro gcr.io/kaniko-project/executor:debug --dockerfile=Dockerfile --destination=docker.io/ffdlops/test 
+
+docker run -v `pwd`:/workspace -v $(PWD)/config.json:/kaniko/config.json  --env DOCKER_CONFIG=/kaniko gcr.io/kaniko-project/executor:latest --dockerfile=Dockerfile --destination=docker.io/ffdlops/test
+
+kubectl create configmap docker-config --from-file=config.json
+kubectl create configmap build-context --from-file=Dockerfile
+kubectl create -f kaniko.yaml
+kubectl cp kaniko.tgz kaniko:/tmp/context.tar.gz -c kaniko-init
+kubectl exec kaniko -c kaniko-init -- tar -zxf /tmp/context.tar.gz -C /kaniko/build-context
+kubectl exec kaniko -c kaniko-init -- touch /tmp/complete
+
+pip install openaihub
+apk add git
+apk add curl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.13.7/bin/linux/amd64/kubectl
+chmod +x kubectl
+mv kubectl /usr/local/bin
