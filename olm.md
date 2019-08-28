@@ -199,3 +199,37 @@ apk add curl
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.13.7/bin/linux/amd64/kubectl
 chmod +x kubectl
 mv kubectl /usr/local/bin
+
+```text
+(base) weiqiangs-mbp:temp wzhuang$ bash install.sh 0.10.0
+customresourcedefinition.apiextensions.k8s.io/clusterserviceversions.operators.coreos.com created
+customresourcedefinition.apiextensions.k8s.io/installplans.operators.coreos.com created
+customresourcedefinition.apiextensions.k8s.io/subscriptions.operators.coreos.com created
+customresourcedefinition.apiextensions.k8s.io/catalogsources.operators.coreos.com created
+customresourcedefinition.apiextensions.k8s.io/operatorgroups.operators.coreos.com created
+namespace/olm created
+namespace/operators created
+clusterrole.rbac.authorization.k8s.io/system:controller:operator-lifecycle-manager created
+serviceaccount/olm-operator-serviceaccount created
+clusterrolebinding.rbac.authorization.k8s.io/olm-operator-binding-olm created
+deployment.apps/olm-operator created
+deployment.apps/catalog-operator created
+clusterrole.rbac.authorization.k8s.io/aggregate-olm-edit created
+clusterrole.rbac.authorization.k8s.io/aggregate-olm-view created
+configmap/olm-operators created
+catalogsource.operators.coreos.com/olm-operators created
+operatorgroup.operators.coreos.com/global-operators created
+operatorgroup.operators.coreos.com/olm-operators created
+subscription.operators.coreos.com/packageserver created
+catalogsource.operators.coreos.com/operatorhubio-catalog created
+Waiting for deployment "olm-operator" rollout to finish: 0 of 1 updated replicas are available...
+deployment "olm-operator" successfully rolled out
+Waiting for deployment "catalog-operator" rollout to finish: 0 of 1 updated replicas are available...
+deployment "catalog-operator" successfully rolled out
+Package server phase: Waiting for CSV to appear
+Package server phase: Pending
+Package server phase: InstallReady
+Package server phase: Installing
+Package server phase: Succeeded
+deployment "packageserver" successfully rolled out
+```
