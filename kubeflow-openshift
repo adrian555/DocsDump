@@ -1,0 +1,199 @@
+wget https://github.com/kubeflow/kubeflow/releases/download/v0.6.2/kfctl_v0.6.2_linux.tar.gz
+tar zxvf kfctl_v0.6.2_linux.tar.gz
+mv kfctl /usr/local/bin
+wget https://raw.githubusercontent.com/kubeflow/kubeflow/v0.6.2/bootstrap/config/kfctl_k8s_istio.0.6.2.yaml
+kfctl init kfapp --config=$PWD/kfctl_k8s_istio.0.6.2.yaml -V
+cd kfapp
+kfctl generate k8s -V
+
+python kustomization.py
+
+oc adm policy add-scc-to-user privileged -z default -n kubeflow
+oc adm policy add-scc-to-user privileged -z default -n istio-system
+
+oc adm policy add-scc-to-user anyuid -z istio-ingress-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z default -n istio-system
+oc adm policy add-scc-to-user anyuid -z prometheus -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-egressgateway-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-citadel-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-ingressgateway-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-cleanup-old-ca-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-mixer-post-install-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-mixer-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-pilot-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-sidecar-injector-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-galley-service-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-security-post-install-account -n istio-system
+oc adm policy add-scc-to-user anyuid -z istio-multi -n istio-system
+oc adm policy add-scc-to-user anyuid -z kiali-service-account -n istio-system
+
+oc adm policy add-scc-to-user anyuid -z admission-webhook-bootstrap-service-account -n kubeflow
+oc adm policy add-scc-to-user anyuid -z admission-webhook-service-account -n kubeflow
+oc adm policy add-scc-to-user anyuid -z application-controller-service-account -n kubeflow
+oc adm policy add-scc-to-user anyuid -z argo -n kubeflow
+oc adm policy add-scc-to-user anyuid -z argo-ui -n kubeflow
+oc adm policy add-scc-to-user anyuid -z centraldashboard -n kubeflow
+oc adm policy add-scc-to-user anyuid -z default -n kubeflow
+oc adm policy add-scc-to-user anyuid -z jupyter-web-app-service-account -n kubeflow
+oc adm policy add-scc-to-user anyuid -z katib-controller -n kubeflow
+oc adm policy add-scc-to-user anyuid -z katib-ui -n kubeflow
+oc adm policy add-scc-to-user anyuid -z meta-controller-service -n kubeflow
+oc adm policy add-scc-to-user anyuid -z metadata-ui -n kubeflow
+oc adm policy add-scc-to-user anyuid -z metrics-collector -n kubeflow
+oc adm policy add-scc-to-user anyuid -z ml-pipeline -n kubeflow
+oc adm policy add-scc-to-user anyuid -z ml-pipeline-persistenceagent -n kubeflow
+oc adm policy add-scc-to-user anyuid -z ml-pipeline-scheduledworkflow -n kubeflow
+oc adm policy add-scc-to-user anyuid -z ml-pipeline-ui -n kubeflow
+oc adm policy add-scc-to-user anyuid -z ml-pipeline-viewer-crd-service-account -n kubeflow
+oc adm policy add-scc-to-user anyuid -z notebook-controller-service-account -n kubeflow
+oc adm policy add-scc-to-user anyuid -z pipeline-runner -n kubeflow
+oc adm policy add-scc-to-user anyuid -z profiles-controller-service-account -n kubeflow
+oc adm policy add-scc-to-user anyuid -z profiles-default-service-account -n kubeflow
+oc adm policy add-scc-to-user anyuid -z pytorch-operator -n kubeflow
+oc adm policy add-scc-to-user anyuid -z seldon-manager -n kubeflow
+oc adm policy add-scc-to-user anyuid -z spartakus -n kubeflow
+oc adm policy add-scc-to-user anyuid -z tf-job-dashboard -n kubeflow
+oc adm policy add-scc-to-user anyuid -z tf-job-operator -n kubeflow
+
+oc adm policy add-scc-to-group anyuid system:authenticated -n kubeflow
+
+oc adm policy add-cluster-role-to-user cluster-admin -z default
+oc adm policy add-cluster-role-to-user cluster-admin -z pipeline-runner
+oc adm policy add-scc-to-group privileged system:serviceaccounts:kubeflow
+
+kfctl apply k8s -V
+
+oc edit clusterrole argo
+
+# do this for katib-mysql bound pv and metadata-mysql bound pv
+mount --bind --make-rshared /var/lib/origin/openshift.local.clusterup/openshift.local.pv/pv0094 /var/lib/origin/openshift.local.clusterup/openshift.local.pv/pv0094
+
+
+
+oc adm policy add-scc-to-user anyuid -z ambassador
+oc adm policy add-scc-to-user anyuid -z default
+oc adm policy add-scc-to-group anyuid system:authenticated
+oc adm policy add-scc-to-group privileged system:serviceaccounts:kubeflow
+
+oc create configmap openaihub-install-config --from-literal=KUBECTL_VERSION=v1.11.0
+oc create -f deploy/crds/openaihub_v1alpha1_pipelines_crd.yaml
+oc apply -f deploy/service_account.yaml
+oc apply -f deploy/role.yaml
+oc apply -f deploy/role_binding.yaml
+oc apply -f deploy/operator.yaml
+oc apply -f deploy/crds/openaihub_v1alpha1_pipelines_cr.yaml
+
+kubectl logs deployment/pipelines-operator operator -n kubeflow -f
+
+cd /etc/systemd/system/multi-user.target.wants
+vi docker.service (add MountFlags=shared)
+systemctl daemon-reload
+systemctl restart docker
+
+findmnt -o TARGET,PROPAGATION |grep storage
+
+mkdir -p /storage/nfs
+cd /storage/nfs
+mount --bind --make-rshared . .
+
+kubectl patch storageclass nfs-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+oc login -u system:admin
+htpasswd -cb $HOME/openshift.local.clusterup/openshift-controller-manager/htpasswd  ocadmin password
+oc adm policy add-cluster-role-to-user cluster-admin ocadmin
+oc login -u ocadmin -p password
+
+oc adm policy add-scc-to-user anyuid -z pipeline-runner
+oc adm policy add-cluster-role-to-user cluster-admin -z pipeline-runner
+
+oc edit clusterrole argo
+- apiGroups:
+  - ""
+  attributeRestrictions: null
+  resources:
+  - pods
+  - pods/exec
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  attributeRestrictions: null
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  attributeRestrictions: null
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - create
+  - delete
+- apiGroups:
+  - argoproj.io
+  attributeRestrictions: null
+  resources:
+  - workflows
+  - workflows/finalizers
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+
+install tiller
+
+python to modify the argo role
+
+oc get clusterrole argo -o yaml > argo.yaml
+
+import yaml
+
+y = yaml.safe_load(open("argo.yaml"))
+del y["metadata"]
+y["metadata"] = dict()
+y["metadata"]["labels"] = dict()
+y["metadata"]["labels"]["app"] = "argo"
+y["metadata"]["name"] = "argo"
+for x in y["rules"]:
+  if "pods" in x["resources"]:
+    x["verbs"].append('delete')
+  elif "workflows" in x["resources"]:
+    x["resources"].append('workflows/finalizers')
+yaml.dump(y, open("argo.yaml",'w'), default_flow_style=False)
+
+oc apply -f argo.yaml
+
+[root@wzdev1 ~]# cat openai*yaml
+spec:
+  template:
+    spec:
+      containers:
+      - env:
+        - name: REACT_APP_API
+          value: <none>:30436
+        - name: REACT_APP_KFP
+          value: <none>:31447
+        - name: REACT_APP_NBVIEWER_API
+          value: <none>:32409
+        name: openaihub-ui
+
+sed -i "s/<none>/$PUBLIC_IP/g" openaihub-ui.patch.yaml
+
+oc patch deployment openaihub-ui -p "$(cat openaihub-ui.patch.yaml)"
+
+for kubeflow operator, after operator is running, do this
+
+oc adm policy add-cluster-role-to-user cluster-admin -z kubeflow-operator
+
+then deploy the application

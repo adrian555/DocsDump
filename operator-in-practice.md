@@ -1,6 +1,10 @@
 # Operator in Practice
 
-**Opertaors** was introduced in 2016 by [CoreOS](https://coreos.com/blog/introducing-operators.html). An Operator implements the Kubernetes resouce and controller with application specific domain knowledge to automate the common tasks including creating, configuring and managing instances of complex applications.
+## Why another article around Operator Framework
+
+Since [Red Hat](https://www.redhat.com/en) announced [Operator Framework](https://coreos.com/blog/introducing-operator-framework) back in early 2018, there has been many articles and tutorials on what the framework is and how to benefit from it. However those articles usually cover one aspect of the 
+
+**Opertaors** was introduced in 2016 by [CoreOS](https://coreos.com/blog/introducing-operators.html). Operators enable users to create, configure and manage, not just the stateless but also stateful, Kubernetes applications. An operator has its custom controller watching the custom resources specifically defined for the applications. Hence an operator mainly consists of Kubernetes CustomResourceDefinitions (CRDs) and Controller logic.
 
 ## Operator Framework
 
