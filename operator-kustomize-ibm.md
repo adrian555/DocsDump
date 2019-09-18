@@ -111,7 +111,9 @@ spec:
 
 The `DEPLOY_ENV` is a configuration to be modified among different cluster deployment. We are using kustomize to change the configuration for different deployments.
 
-To achieve this, the `kustomization.yaml` in the `base` directory generates the ConfigMap `install-config` which contains just one config as [follow](https://github.com/adrian555/operator-kustomize/blob/master/hello-kustomize/base/kustomization.yaml):
+Following shows how to achieve this.
+
+1. create the `kustomization.yaml` in the `base` directory to generate the ConfigMap `install-config` which contains just one config as [follow](https://github.com/adrian555/operator-kustomize/blob/master/hello-kustomize/base/kustomization.yaml):
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -137,7 +139,7 @@ configMapGenerator:
     - DEPLOY_ENV="base"
 ```
 
-Then in each overlay, we update the `DEPLOY_ENV` with different [value](https://github.com/adrian555/operator-kustomize/blob/master/hello-kustomize/overlays/production/config-map.yaml)
+2. add overlays. In each overlay, update the `DEPLOY_ENV` with different [value](https://github.com/adrian555/operator-kustomize/blob/master/hello-kustomize/overlays/production/config-map.yaml)
 
 ```yaml
 apiVersion: v1
@@ -148,7 +150,7 @@ data:
   DEPLOY_ENV: "production"
 ```
 
-and patch it with the `kustomization.yaml` file
+3. create the `kustomization.yaml` file for the overlay
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
