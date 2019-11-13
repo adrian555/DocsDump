@@ -1,6 +1,6 @@
 # Operator Framework in Practice
 
-Since [Red Hat](https://www.redhat.com/en) announced [Operator Framework](https://coreos.com/blog/introducing-operator-framework) back in early 2018, there has been many articles and tutorials on what the framework is and how to benefit from it. However, we have not seen any article covers the complete cycle from writing to installing operators. This could be partly because the open source project itself evolves very fast. The documentation on the open source project's [`github`](https://github.com/operator-framework) site sometime was out of date. Even the official documentation for [OpenShift Container Platform](https://docs.openshift.com/container-platform/4.2/welcome/index.html) has some outdated contents.
+Since [Red Hat](https://www.redhat.com/en) announced [Operator Framework](https://coreos.com/blog/introducing-operator-framework) back in early 2018, there has been many articles and tutorials on what the framework is and how to benefit from it. However, we have not seen any article covers the complete cycle from writing to installing operators. This could be partly because the open source project itself evolves very fast. The documentation on the open source project's [`github`](https://github.com/operator-framework) site sometime was out of date. Even the official documentation for [OpenShift Container Platform](https://docs.openshift.com/container-platform/4.1/welcome/index.html) has some outdated contents.
 
 This tutorial, however, aims to provide hands-on exercise with step-by-step instruction and demonstrate how to create, register, install an operator and finally deploy the application managed by the operator. Basic concepts, tools and services offered by the Operator Framework will be briefly explained followed by a workable example.
 
@@ -32,7 +32,7 @@ An operator watches on the custom resources through CustomResourceDefinitions (C
 
 ## Create SparkCluster operator with Operator SDK
 
-This tutorial will build an operator to create a standalone [Spark](https://spark.apache.org/) cluster running on an OpenShift cluster. A Spark standalone cluster consists of one or more master and worker nodes. Each node runs Spark binary in a daemon process. The master node provides `SPARK_MASTER` URL for Spark drivers to submit applications to run on. The worker node receives jobs from the master and spawn exectuors to run tasks.
+This tutorial will build an operator to create a standalone [Spark](https://spark.apache.org/) cluster running on an OpenShift 4.1 cluster. A Spark standalone cluster consists of one or more master and worker nodes. Each node runs Spark binary in a daemon process. The master node provides `SPARK_MASTER` URL for Spark drivers to submit applications to run on. The worker node receives jobs from the master and spawn exectuors to run tasks.
 
 The application managed by the operator is to create such a Spark cluster.
  
@@ -70,7 +70,7 @@ cd ..
 `Operator SDK` can help build one of `Go`, `Helm` and `Ansible` types of operators. The difference among these three types of operators is the maturity of an operator's encapsulated operations as shown following:
 
 ![Operator maturity model](https://github.com/adrian555/DocsDump/raw/dev/images/OperatorMaturityModel.png)
-*Operator maturity model* from [OpenShift Container Platform document](https://docs.openshift.com/container-platform/4.2/operators/olm-what-operators-are.html)
+*Operator maturity model* from [OpenShift Container Platform document](https://docs.openshift.com/container-platform/4.1/applications/operators/olm-what-operators-are.html)
 
 This tutorial chooses `Ansible` as the mechanism to write the controller logic for the Spark operator.
 
@@ -176,6 +176,10 @@ Before an operator can be installed through OLM, two things must happen. First a
 ![OLM and catalog source](https://github.com/adrian555/DocsDump/raw/dev/images/catalogsource.jpg)
 *Add operators to registry and use in catalog source*
 
+As illustrated in the above figure, there are several tasks to perform.
+
+a) generate ClusterServiceVersion
+
 The Operator SDK tool also helps generate the CSV. Run following command:
 
 ```command line
@@ -185,6 +189,124 @@ cd ..
 ```
 
 The CSV maniefest is generated in the [`spark-operator/deploy/olm-catalog`](https://github.com/adrian555/ofip/tree/master/spark-operator/deploy/olm-catalog/spark-operator) directory. The directory contains different versions of CSVs and dependent CRDs, together with a package manifest describing the channels for different install path for application (such as alpha vs stable). It is used in the Subscription manifest when create or upgrade the CustomResource (ie. application).
+
+You can update the CSV [file](https://github.com/adrian555/ofip/blob/master/spark-operator/deploy/olm-catalog/spark-operator/0.0.1/spark-operator.v0.0.1.clusterserviceversion.yaml) with some metadata such as adding an icon to the operator etc. This tutorial comes with the updated version of CSV in this directory [`spark-operator/deploy/olm`](https://github.com/adrian555/ofip/tree/master/spark-operator/deploy/olm).
+
+b) verify CSV
+
+Next step is to verify the CSV with the [operator-courier](https://github.com/operator-framework/operator-courier) tool, part of the `Operator Framework`. `operator-courier` can be installed as `pip` package as follow:
+
+```command line
+pip3 install operator-courier
+```
+
+Now run following command to validate the CSV.
+
+```command line
+cd spark-operator/deploy/olm
+operator-courier verify spark-operator
+cd -
+```
+
+c) build docker image for Operator Registry
+
+[`operator-registry`](https://github.com/operator-framework/operator-registry) is also part of the `Operator Framework`. It provides operator catalog data to OLM by running a registry server on a certain port for OLM to discover the operator.
+
+To build the docker image for operator registry, run
+
+```command line
+cd spark-operator/deploy/olm
+
+# copy operator manifests to a directory for Dockerfile
+mkdir operators
+cp -r spark-operator operators
+
+# build the image
+docker build . -t dsml4real/spark-operator-registry:v0.0.1
+
+# push the image
+docker push dsml4real/spark-operator-registry:v0.0.1
+
+cd -
+```
+
+d) create a catalog source
+
+CatalogSource is a Kubernetes resource containing a catalog of operators that can be installed through OLM. Catalog source runs the operator registry server to expose the operators stored in the local database. A catalog source manifest looks like follow
+
+```yaml
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: spark-operator-catalog
+  namespace: openshift-operator-lifecycle-manager
+spec:
+  sourceType: grpc
+  image: dsml4real/spark-operator-registry:v0.0.1
+  imagePullPolicy: Always
+  displayName: Tutorial Operators
+  publisher: IBM
+```
+
+The `namespace` field specifies the namespace where the catalog source will run. To deploy, run
+
+```command line
+cd spark-operator/deploy/olm
+oc apply -f catalogsource.yaml
+cd -
+```
+
+To check the progress, run
+
+```command line
+oc get all -n openshift-operator-lifecycle-manager|grep spark-operator-catalog
+```
+
+And once the catalog service is up and running, run following command to verify that the `spark-operator` operator is shown in the packages for the OLM.
+
+```command line
+oc get packagemanifest -n openshift-operator-lifecycle-manager
+```
+
+One thing is worth mentioning here. We are creating the catalog source in the `openshift-operator-lifecycle-manager` so that we can use the builtin `olm-operators` OperatorGroup in this namespace to install the Spark operator. We can also create the catalog source in other namespace such as `openshift-marketplace`. But we will have to create an OperatorGroup there. We will cover OperatorGroup topic in subsequent articles.
+
+e) install Spark operator through OpenShift console
+
+Now you can see the Spark operator shows in the OpenShift console like follow
+
+![Spark operator in OpenShift console](images/openshift-spark.png)
+*Spark operator in OpenShift console*
+
+To install the operator, switch to the `openshift-operators` namespace and click on the `Create Subscription`. Follow the instructions to create the Spark operator.
+
+![Installed Spark operator](images/installedSparkOperator.png)
+*Installed Spark operator in OpenShift console*
+
+To summarize, there are two approaches to install an operator. Installing through OLM requests more preparation steps but users can benefit from long run as the operator is managed and monitored by the OLM.
+
+8. Create a Spark cluster
+
+Finally, we will create a Spark cluster using the operator installed above. There are also two approaches. Since the Spark operator creates a custom resource `Spark` in the cluster, to create a Spark cluster is basically to create an instance of `Spark`.
+
+* manual approach
+
+Here, we just need to create a manifest to use the `Spark` custom resource. A sample manifest has been provided by the Operator SDK when the operator is created. Since we have added some extra parameters to be used by the Ansible tasks, we need to add/modify those in the manifest.
+
+We will create the Spark cluster with this [manifest](https://github.com/adrian555/ofip/blob/master/spark-operator/deploy/crds/ibm_v1alpha1_spark_pv_cr.yaml):
+
+```command line
+cd spark-operator
+oc apply -f deploy/crds/ibm_v1alpha1_spark_pv_cr.yaml
+cd ..
+```
+
+To check the progress and the output of the Ansible tasks, run 
+
+```command line
+kubectl logs deployment/spark-operator operator -n openshift-operators -f
+```
+
+
 
 Operator scope
 namespace scoped: watches and manages resources in a single namespace
