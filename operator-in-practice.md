@@ -70,7 +70,8 @@ cd ..
 `Operator SDK` can help build one of `Go`, `Helm` and `Ansible` types of operators. The difference among these three types of operators is the maturity of an operator's encapsulated operations as shown following:
 
 ![Operator maturity model](https://github.com/adrian555/DocsDump/raw/dev/images/OperatorMaturityModel.png)
-*Operator maturity model* from [OpenShift Container Platform document](https://docs.openshift.com/container-platform/4.1/applications/operators/olm-what-operators-are.html)
+
+*Figure 1. Operator maturity model* from [OpenShift Container Platform document](https://docs.openshift.com/container-platform/4.1/applications/operators/olm-what-operators-are.html)
 
 This tutorial chooses `Ansible` as the mechanism to write the controller logic for the Spark operator.
 
@@ -175,7 +176,8 @@ kubectl logs deployment/spark-operator operator -n tutorial -f
 Before an operator can be installed through OLM, two things must happen. First a CSV manifest must be generated to include the metadata, CRDs and install strategy for the operator. Secondly it has to register itself to a catalog for the OLM to discover.
 
 ![OLM and catalog source](https://github.com/adrian555/DocsDump/raw/dev/images/catalogsource.jpg)
-*Add operators to registry and use in catalog source*
+
+*Figure 2. Add operators to registry and use in catalog source*
 
 As illustrated in the above figure, there are several tasks to perform.
 
@@ -276,12 +278,14 @@ e) install Spark operator through OpenShift console
 Now you can see the Spark operator shows in the OpenShift console like follow
 
 ![Spark operator in OpenShift console](https://github.com/adrian555/DocsDump/raw/dev/images/openshift-spark.png)
-*Spark operator in OpenShift console*
+
+*Figure 3. Spark operator in OpenShift console*
 
 To install the operator, switch to the `openshift-operators` namespace and click on the `Create Subscription`. Follow the instructions to create the Spark operator.
 
 ![Installed Spark operator](https://github.com/adrian555/DocsDump/raw/dev/images/installedSparkOperator.png)
-*Installed Spark operator in OpenShift console*
+
+*Figure 4. Installed Spark operator in OpenShift console*
 
 To summarize, there are two approaches to install an operator. Installing through OLM requests more preparation steps but users can benefit from long run as the operator is managed and monitored by the OLM.
 
@@ -325,12 +329,14 @@ Since the Spark operator has been installed through OLM, now we can create the a
 From the OpenShift console, switch to the namespace where the Spark cluster will be created. And then click on the `spark-operator` operator, you will see following page:
 
 ![Install Spark cluster through operator](https://github.com/adrian555/DocsDump/raw/dev/images/SparkOperatorInstall.png)
-*Create Spark instance through console*
+
+*Figure 5. Create Spark instance through console*
 
 Click on the `Create New` and follow the instruction to create a Spark cluster.
 
 ![Spark cluster created](https://github.com/adrian555/DocsDump/raw/dev/images/SparkOperatorInstalled.png)
-*Spark instance*
+
+*Figure 6. Spark instance*
 
 The `example-spark` is the instance name of the `Spark` custom resource created by the Spark operator. We can also verify that there are `spark-master` and `spark-worker` pods as well as `spark-cluster` service running in the cluster.
 
