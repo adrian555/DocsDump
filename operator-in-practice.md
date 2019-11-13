@@ -138,6 +138,7 @@ cd spark-operator
 
 # create a new project (optional)
 oc new-project tutorial
+oc adm policy add-scc-to-user anyuid -z default
 
 # create CRDs
 oc apply -f deploy/crds/ibm_v1alpha1_spark_crd.yaml
@@ -274,12 +275,12 @@ e) install Spark operator through OpenShift console
 
 Now you can see the Spark operator shows in the OpenShift console like follow
 
-![Spark operator in OpenShift console](images/openshift-spark.png)
+![Spark operator in OpenShift console](https://github.com/adrian555/DocsDump/raw/dev/images/openshift-spark.png)
 *Spark operator in OpenShift console*
 
 To install the operator, switch to the `openshift-operators` namespace and click on the `Create Subscription`. Follow the instructions to create the Spark operator.
 
-![Installed Spark operator](images/installedSparkOperator.png)
+![Installed Spark operator](https://github.com/adrian555/DocsDump/raw/dev/images/installedSparkOperator.png)
 *Installed Spark operator in OpenShift console*
 
 To summarize, there are two approaches to install an operator. Installing through OLM requests more preparation steps but users can benefit from long run as the operator is managed and monitored by the OLM.
@@ -306,50 +307,33 @@ To check the progress and the output of the Ansible tasks, run
 kubectl logs deployment/spark-operator operator -n openshift-operators -f
 ```
 
+Also run these commands to make sure the pods and service for the Spark cluster are running
 
+```command line
+oc get pods |grep spark
+### spark-master-7bc49bc8f-rfjd8    1/1     Running   0          2m19s
+### spark-worker-86466967fd-dq42s   1/1     Running   0          2m17s
 
-Operator scope
-namespace scoped: watches and manages resources in a single namespace
-cluster scoped: watches and manages cluster-wide
+oc get svc |grep spark
+### spark-cluster   NodePort   172.30.56.52   <none>        7077:31687/TCP,8080:32142/TCP   2m27s
+```
 
+* console approach
 
+Since the Spark operator has been installed through OLM, now we can create the application from the operator by just some clicks.
 
-Once a CatalogSource resource is created in its namespace (the sourceNamespace later used to install the operators), a service will be running on a defined port so that OLM can discover all operators included in this catalog.
+From the OpenShift console, switch to the namespace where the Spark cluster will be created. And then click on the `spark-operator` operator, you will see following page:
 
-Each operator watches and manages these resources respectively.
+![Install Spark cluster through operator](https://github.com/adrian555/DocsDump/raw/dev/images/SparkOperatorInstall.png)
+*Create Spark instance through console*
 
-OperatorGroup provides multitenant configuration to Operators registered through CatalogSource. An OperatorGroup selects a set of target namespaces (olm.targetNamespaces in CSV) in which to generate required RBAC access for its member Operators. If an operator’s  CSV is in the same namespace as the OperatorGroup, and its InstallMode support the same of namespaces targeted by the OperatorGroup, then this operator is a member of this OG and may be installed by this OG. We can see one example of CSV during the demo.
+Click on the `Create New` and follow the instruction to create a Spark cluster.
 
-Two operators
-OLM operator — operator of operators
-ClusterServiceVersion, ClusterResourceDefinition, OperatorGroup
-Deployments, (Cluster)Role, (Cluster)RoleBinding, ServiceAccount
-Catalog operator — discover and install CSVs and CRDs
-InstallPlan, CatalogSource, Subscription
-Metrics
-csv_count, install_plan_count, subscription_count, csv_upgrade_count
+![Spark cluster created](https://github.com/adrian555/DocsDump/raw/dev/images/SparkOperatorInstalled.png)
+*Spark instance*
 
-Each operator watches and manages these resources respectively.
+The `example-spark` is the instance name of the `Spark` custom resource created by the Spark operator. We can also verify that there are `spark-master` and `spark-worker` pods as well as `spark-cluster` service running in the cluster.
 
-OperatorGroup provides multitenant configuration to Operators registered through CatalogSource. An OperatorGroup selects a set of target namespaces (olm.targetNamespaces in CSV) in which to generate required RBAC access for its member Operators. If an operator’s  CSV is in the same namespace as the OperatorGroup, and its InstallMode support the same of namespaces targeted by the OperatorGroup, then this operator is a member of this OG and may be installed by this OG. We can see one example of CSV during the demo.
+Up to here, this tutorial provides step by step guides to create, install, and deploy an operator and the application managed by the operator, with Operator Framework open source project. We can see that the Operator SDK and OLM are great toolsets to assist the development and management of operators.
 
-
-learn.openshift.com/operatorframework
-
-Two main components are `operator sdk` and `operator lifecycle manager`.
-
-1. Two approaches to install the operator and deploy application.
-- Install manually
-  - create serviceaccount
-  - create role and rolebinding
-  - create the operator deployment
-  - deploy the application with customresource
-- Install through OLM
-  - generate clusterserviceversion
-  - update csv and verify with operator-courier
-  - build image for operator-registry
-  - create catalogsource using the registry image
-    - if the sourcenamespace has an operatorgroup watching the targetnamespaces, then the operator can be installed to the targetnamespace
-    - otherwise, need to create an operatorgroup
-  - create the operator deployment with a subscription
-  - deploy the application by creating an instance of the provided API
+Lastly, if users are interested in testing the use of the Spark cluster we created above, the jupyter [notebook](https://github.com/adrian555/ofip/tree/master/demo.ipynb) is provided. Before running it, please replace the `openshift-cluster-hostname` with the node's hostname where the `spark-cluster` service is running.
