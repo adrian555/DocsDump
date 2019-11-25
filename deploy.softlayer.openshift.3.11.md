@@ -111,6 +111,6 @@ source p3/bin/activate
 
 ```command line
 pip install openaihub==v0.0.1.dev1
-penaihub install --openshift --namespace kubeflow --verbose
+openaihub install --openshift --namespace kubeflow --verbose
 ```
 
