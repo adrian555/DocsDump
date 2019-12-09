@@ -99,9 +99,11 @@ It is worth mentioning that these tasks are the same one when you use to install
 
 4. Update RBAC roles
 
-The Operator SDK command creates a `spark-operator` service account with certain [role](https://github.com/adrian555/ofip/blob/master/spark-operator/deploy/role.yaml) and [role binding](https://github.com/adrian555/ofip/blob/master/spark-operator/deploy/role_binding.yaml). The application is installed and managed by this service account. And the role defines the RBAC restriction for the service account. Users should carefully choose what roles to be granted for this service account for security reasons. Also, if an operator is watching resources from other namespaces accross the OpenShift cluster, you may need to choose appropriate cluster roles instead. This tutorial just binds the `cluster-admin` role to the `spark-operator` service account for simplification purpose.
+The Operator SDK command creates a `spark-operator` service account with certain [role](https://github.com/adrian555/ofip/blob/master/spark-operator/deploy/role.yaml) and [role binding](https://github.com/adrian555/ofip/blob/master/spark-operator/deploy/role_binding.yaml). The application is installed and managed by this service account. And the role defines the RBAC restriction for the service account. Users should carefully choose what roles to be granted for this service account for security reasons. RBAC provides authorization of given actions to the service account. If an operator was not supposed to delete cerain resources, the `delete` action should not be given so to avoid code problem of the operator. Consider another case where an operator has dependencies, one of them may perform unexpected action from version to version, you certainly don't want to get caught without knowning the action is not allowed.
 
-5. Create Spark manifest
+Also, if an operator is watching resources from other namespaces accross the OpenShift cluster, you may need to choose appropriate cluster roles instead. This tutorial just binds the `cluster-admin` role to the `spark-operator` service account for simplification purpose.
+
+1. Create Spark manifest
 
 An operator creates and watches custom resource definitions. These CRDs are saved in the [`spark-operator/deploy/crds`](https://github.com/adrian555/ofip/tree/master/spark-operator/deploy/crds) directory. To create an instance of the CRD, you will need to create a manifest file. You can specify parameters for the custom resource as well.
 
@@ -235,7 +237,9 @@ cd -
 
 d) create a catalog source
 
-CatalogSource is a Kubernetes resource containing a catalog of operators that can be installed through OLM. Catalog source runs the operator registry server to expose the operators stored in the local database. A catalog source manifest looks like follow
+CatalogSource is a Kubernetes resource containing a catalog of operators that can be installed through OLM. Catalog source runs the operator registry server as a service exposed on port `50051`. It runs with the docker image built above and initializes a sqlite database local to the container for data querying. This allows `OLM` to discover and query the operators registered in the catalog.
+
+A catalog source manifest looks like follow
 
 ```yaml
 apiVersion: operators.coreos.com/v1alpha1
