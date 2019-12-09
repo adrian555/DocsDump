@@ -103,7 +103,7 @@ The Operator SDK command creates a `spark-operator` service account with certain
 
 Also, if an operator is watching resources from other namespaces accross the OpenShift cluster, you may need to choose appropriate cluster roles instead. This tutorial just binds the `cluster-admin` role to the `spark-operator` service account for simplification purpose.
 
-1. Create Spark manifest
+5. Create Spark manifest
 
 An operator creates and watches custom resource definitions. These CRDs are saved in the [`spark-operator/deploy/crds`](https://github.com/adrian555/ofip/tree/master/spark-operator/deploy/crds) directory. To create an instance of the CRD, you will need to create a manifest file. You can specify parameters for the custom resource as well.
 
