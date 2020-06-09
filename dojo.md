@@ -140,3 +140,30 @@ kubectl get pods -n kubeflow
   ```shell
   kubectl logs deployment/kubeflow-operator -n ${OPERATOR_NAMESPACE} -f
   ```
+
+* Install `tekton pipelines`
+
+  - Deploy `tekton pipelines`
+
+  ```shell
+  kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.11.3/release.yaml
+  kubectl patch cm feature-flags -n tekton-pipelines \
+    -p '{"data":{"disable-home-env-overwrite":"true","disable-working-directory-overwrite":"true"}}'
+  ```
+
+  - Install CLI follow the [instructions](https://github.com/tektoncd/cli#installing-tkn)
+
+  - Install `tekton dashboard`
+
+  ```shell
+  kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1/tekton-dashboard-release.yaml
+  kubectl patch svc tekton-dashboard -n tekton-pipelines --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
+  ```
+
+  - Access `tekton dashboard`
+
+  ```shell
+  kubectl port-forward -n tekton-pipelines svc/tekton-dashboard 9097:9097&
+  ```
+
+  To access, from browser [`http://localhost:9097`](http://localhost:9097).
