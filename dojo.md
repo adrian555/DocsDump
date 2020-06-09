@@ -31,7 +31,12 @@ Note: if you are running `Docker Desktop` which may come with the option to star
 
 * Install `go` following this [link](https://golang.org/dl/)
 
-  After install, set the `GOPATH` and `GOBIN` envs and create `$HOME/go/src` directory.
+  After install, do following to set up the environment
+  
+  ```shell
+  mkdir -p $HOME/go/src
+  export GOPATH=$HOME/go
+  ```
 
 * Clone and build `kfctl`
 
