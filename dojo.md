@@ -26,9 +26,15 @@ Note: if you are running `Docker Desktop` which may come with the option to star
   - Start `minikube`
 
   ```shell
-  minikube start --memory=8012MB --cpus=4 --kubernetes-version=v1.15.6
+  minikube start --driver=docker --memory=8192MB --cpus=6 --disk-size=30000mb --kubernetes-version=v1.15.6
   ```
 
+  - Access dashboard
+
+  ```shell
+  minikube dashboard&
+  ```
+  
 * Install `go` following this [link](https://golang.org/dl/)
 
   After install, do following to set up the environment
@@ -74,6 +80,8 @@ kubectl get pods -n istio-system
 kubectl get pods -n kubeflow
 ```
 
+Wait until all pods and services are up and running in the `kubeflow` namespace than continue to the next steps.
+
 * Access Kubeflow dashboard
 
   - Port forward `istio-ingressgateway`
@@ -84,7 +92,7 @@ kubectl get pods -n kubeflow
 
   - Access the dashboard through `localhost:8080`
 
-  - Follow the instructions to create profile namespace
+  - Follow the instructions to have the profile namespace created
 
   - Run a pipeline tutorial
 
